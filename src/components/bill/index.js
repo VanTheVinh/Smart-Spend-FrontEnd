@@ -1,103 +1,75 @@
-import React, { useState , useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { bill } from '~/services/billService';
+import React, { useState, useEffect, useContext } from 'react';
 import { AppContext } from '~/contexts/appContext';
 
-const Bill = () => {
-    const { userId, categoryId } = useContext(AppContext);
-    console.log("User ID:", categoryId); // In ra userId để kiểm tra
+const BillList = () => {
+  const { userId } = useContext(AppContext); // Lấy userId từ AppContext
+  const [bills, setBills] = useState([]); // State để lưu danh sách bills
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    const [type, setType] = useState('');
-    const [source, setPaymentMethod] = useState('');
-    const [amount, setAmount] = useState('');
-    const [date, setDate] = useState('');
-    const [description, setDescription] = useState('');
-    const [message, setMessage] = useState('');
-    const navigate = useNavigate();
+  // Hàm fetch bills từ API
+  const fetchBills = async () => {
+    if (!userId) return; // Không thực hiện nếu userId chưa được thiết lập
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/get-bills?user_id=${userId}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      setBills(data); // Cập nhật danh sách bills
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching bills:', error);
+      setError(error.message);
+      setLoading(false);
+    }
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-          const response = await bill(
-            type,
-            source,
-            amount,
-            date,
-            description,
-            userId,
-            categoryId
-        );
-          setMessage(`${response.data.message}`);
-        } catch (error) {
-          if (error.response && error.response.data) {
-            setMessage(`${error.response.data.message}`);
-          } else {
-            setMessage('Đã xảy ra lỗi.');
-          }
-        }
-      };
+  // Fetch bills khi component mount hoặc userId thay đổi
+  useEffect(() => {
+    fetchBills();
+  }, [userId]);
 
-    return (
-        <div>
-            <h2>Hóa đơn chi tiêu</h2>
-                <form id="transactionForm" onSubmit={handleSubmit}>
-                    <div>
-                        <label for="type">Loại: </label>
-                            <select 
-                                value={type} 
-                                onChange={(e) => setType(e.target.value)} 
-                                required
-                            >
-                                <option value="">Chọn loại</option>
-                                <option value="THU">THU</option>
-                                <option value="CHI">CHI</option>
-                            </select>
-                    </div>
-                    <div> 
-                        <label for="source">Nguồn: </label>
-                        <select 
-                            value={source} 
-                            onChange={(e) => setPaymentMethod(e.target.value)} 
-                            required
-                        >
-                            <option value="">Chọn phương thức</option>
-                            <option value="CHUYỂN KHOẢN">CHUYỂN KHOẢN</option>
-                            <option value="TIỀN MẶT">TIỀN MẶT</option>
-                        </select>
-                    </div>
-                    <div> 
-                        <label for="amount">Số tiền: </label>
-                        <input 
-                        type="number" 
-                        id="amount" 
-                        name="amount" 
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        required min = "0" />
-                    </div> 
-                    <div> 
-                        <label for="date">Ngày:</label>
-                        <input 
-                            type="date" 
-                            id="date" 
-                            name="date"
-                            value={date}
-                            onChange={(e) => setDate(e.target.value)} required />
-                    </div>
-                    <div> 
-                        <label for="description">Mô tả: </label>
-                        <textarea 
-                            id="description" 
-                            name="description" 
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                        >
-                        </textarea>
-                    </div>
-                <button type="submit">Xác nhận</button>
-                </form>
-                {message && <p>{message}</p>}
-        </div>
-    );
+  if (loading) {
+    return <div>Loading bills...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  return (
+    <div>
+      <h2>Bill List</h2>
+
+      {bills.length === 0 ? (
+        <p>No bills found.</p>
+      ) : (
+        <table border="1" cellPadding="10" cellSpacing="0">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Source</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {bills.map((bill) => (
+              <tr key={bill.id}>
+                <td>{bill.type}</td>
+                <td>{bill.source}</td>
+                <td>{bill.amount}</td>
+                <td>{bill.date}</td>
+                <td>{bill.description}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
 };
-export default Bill;
+
+export default BillList;

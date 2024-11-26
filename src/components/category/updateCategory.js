@@ -23,11 +23,6 @@ const UpdateCategory = ({ isOpen, onRequestClose, category }) => {
 
   const [selectedType, setSelectedType] = useState(category?.category_type || '');
 
-  const categoryOptions = {
-    THU: ['Ba Mẹ cho', 'Đi sự kiện', 'Pass đồ'],
-    CHI: ['Ăn uống', 'Tiền trọ, điện, nước, wifi', 'Phát sinh'],
-  };
-
   const handleDateChange = (date) => {
     const isoDate = format(date, 'dd-MM-yyyy');
     setCategoryData({ ...categoryData, time_frame: isoDate });

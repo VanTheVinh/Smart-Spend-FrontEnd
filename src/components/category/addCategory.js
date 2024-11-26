@@ -10,7 +10,6 @@ Modal.setAppElement('#root');
 
 const Category = () => {
   const { userId, categories, setCategories } = useContext(AppContext);
-  console.log('User ID:', userId);
 
   const [categoryData, setCategoryData] = useState({
     category_type: '',
@@ -23,11 +22,6 @@ const Category = () => {
 
   const [selectedType, setSelectedType] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const categoryOptions = {
-    THU: ['Ba Mẹ cho', 'Đi sự kiện', 'Pass đồ'],
-    CHI: ['Ăn uống', 'Tiền trọ, điện, nước, wifi', 'Phát sinh'],
-  };
 
   const handleDateChange = (date) => {
     const isoDate = format(date, 'dd-MM-yyyy');
