@@ -16,7 +16,7 @@ const Register = () => {
       if (error.response && error.response.data) {
         setMessage(`${error.response.data.message}`);
       } else {
-        setMessage('Đã xảy ra lỗi khi kết nối đến server.');
+        setMessage('Đã xảy ra lỗi.');
       }
     }
   };

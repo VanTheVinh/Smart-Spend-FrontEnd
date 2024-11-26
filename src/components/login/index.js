@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '~/services/authService';
+import { AppContext } from '~/contexts/appContext';
 
 const Login = () => {
+
+  const { setUserId, userId } = useContext(AppContext);
+  console.log("User ID:", userId); // In ra userId để kiểm tra
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -12,8 +17,10 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await login(username, password);
-      navigate('/dashboard');
+      const userId = response.data.user_id; // Lấy user_id từ phản hồi
+      setUserId(userId); // Lưu user_id vào context
       setMessage(`${response.data.message}`);
+      navigate('/dashboard');
     } catch (error) {
       if (error.response && error.response.data) {
         setMessage(`${error.response.data.message}`);
