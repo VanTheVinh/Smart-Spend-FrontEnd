@@ -147,26 +147,3 @@ const UpdateBillModal = ({ isOpen, onRequestClose, billToEdit, onBillUpdated }) 
 };
 
 export default UpdateBillModal;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
