@@ -7,91 +7,97 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 Modal.setAppElement('#root');
 
-const AddBillModal = ({ onBillAdded }) => {
-  const { userId, categories } = useContext(AppContext);
+const AddBillModal = ({ onBillAdded, groupId }) => {
+  const { userId, categories, routeBill } = useContext(AppContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [billData, setBillData] = useState({
     type: '',
-    source: '',
     amount: '',
     date: '',
     category_id: '',
     description: '',
-    user_id: userId,
+    user_id: parseInt(userId),
   });
-  
+
   const [selectedType, setSelectedType] = useState('');
 
-  // Handle Date change for date
   const handleDateChange = (date) => {
     const formattedDate = format(date, 'dd-MM-yyyy');
     setBillData({ ...billData, date: formattedDate });
   };
 
-  // Handle other form field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setBillData({ ...billData, [name]: value });
+
+    setBillData((prev) => ({
+      ...prev,
+      [name]: ['category_id', 'user_id'].includes(name)
+        ? parseInt(value, 10) || 0
+        : name === 'amount'
+        ? parseFloat(value) || 0
+        : value,
+    }));
   };
 
-  // Handle Bill Type selection
   const handleTypeChange = (e) => {
     const value = e.target.value;
     setSelectedType(value);
     setBillData((prev) => ({
       ...prev,
       type: value,
-      category_id: '', // Reset category when bill type changes
+      category_id: '',
     }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Bill Data:', billData);
+
     try {
-        const response = await fetch(`http://127.0.0.1:5000/add-bill`, 
-        {
+      const response = await fetch(`http://127.0.0.1:5000/add-bill`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(billData),
       });
-  
+
       if (response.ok) {
         const result = await response.json();
-      
+
         onBillAdded({
           ...billData,
-          id: result.id, // Thêm ID từ kết quả API
-          category_name: categories.find((cat) => cat.id === billData.category_id)?.category_name || 'Unknown',
+          id: result.id,
+          amount: parseInt(billData.amount),
+          group_id: routeBill === 'group' ? billData.group_id : undefined,
+          category_name:
+            categories.find((cat) => cat.id === billData.category_id)
+              ?.category_name || 'Unknown',
         });
-        
+
         alert('Bill added successfully!');
-        // Reset form và đóng modal
         setBillData({
           type: '',
-          source: '',
           amount: '',
           date: '',
           category_id: '',
           description: '',
           user_id: userId,
+          group_id: '',
         });
+
         setSelectedType('');
         setIsModalOpen(false);
       } else {
         const errorData = await response.json();
         alert(`Error: ${errorData.message || response.statusText}`);
       }
-      
     } catch (error) {
       console.error('Error during fetch:', error);
       alert(`Network error: ${error.message}`);
     }
   };
-
-  console.log(billData);
 
   return (
     <div>
@@ -118,20 +124,6 @@ const AddBillModal = ({ onBillAdded }) => {
           </div>
 
           <div>
-            <label>Source:</label>
-            <select
-              name="source"
-              value={billData.source}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Select Source</option>
-              <option value="CHUYỂN KHOẢN">CHUYỂN KHOẢN</option>
-              <option value="TIỀN MẶT">TIỀN MẶT</option>
-            </select>
-          </div>
-
-          <div>
             <label>Amount:</label>
             <input
               type="number"
@@ -142,11 +134,14 @@ const AddBillModal = ({ onBillAdded }) => {
             />
           </div>
 
-          {/* Date DatePicker */}
           <div>
             <label>Date:</label>
             <DatePicker
-              selected={billData.date ? parse(billData.date, 'dd-MM-yyyy', new Date()) : null}
+              selected={
+                billData.date
+                  ? parse(billData.date, 'dd-MM-yyyy', new Date())
+                  : null
+              }
               onChange={handleDateChange}
               dateFormat="dd/MM/yyyy"
               placeholderText="dd/mm/yyyy"
@@ -154,7 +149,6 @@ const AddBillModal = ({ onBillAdded }) => {
             />
           </div>
 
-          {/* Category selection based on bill type */}
           <div>
             <label>Category Name:</label>
             <select
@@ -183,6 +177,19 @@ const AddBillModal = ({ onBillAdded }) => {
               onChange={handleChange}
             ></textarea>
           </div>
+
+          {routeBill === 'group' && (
+            <div>
+              <label>Group ID:</label>
+              <input
+                type="text"
+                name="group_id"
+                value={billData.group_id}
+                onChange={handleChange}
+                disabled
+              />
+            </div>
+          )}
 
           <button type="submit">Add Bill</button>
           <button type="button" onClick={() => setIsModalOpen(false)}>

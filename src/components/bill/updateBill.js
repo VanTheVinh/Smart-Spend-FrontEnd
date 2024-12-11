@@ -12,7 +12,6 @@ const UpdateBillModal = ({ isOpen, onRequestClose, billToEdit, onBillUpdated }) 
   const [billData, setBillData] = useState({
     id: '',
     type: '',
-    source: '',
     amount: '',
     date: '',
     category_id: '',
@@ -22,16 +21,9 @@ const UpdateBillModal = ({ isOpen, onRequestClose, billToEdit, onBillUpdated }) 
 
   useEffect(() => {
     if (billToEdit) {
-      // Initialize bill data with the selected bill's details
       setBillData({
-        id: billToEdit.id,
-        type: billToEdit.type,
-        source: billToEdit.source,
-        amount: billToEdit.amount,
-        date: billToEdit.date,
-        category_id: billToEdit.category_id,
-        userId: userId || billToEdit.userId,
-        description: billToEdit.description,
+        ...billToEdit,
+        userId: userId || billToEdit.userId, // Ensure userId is set
       });
     }
   }, [billToEdit, userId]);
@@ -39,23 +31,21 @@ const UpdateBillModal = ({ isOpen, onRequestClose, billToEdit, onBillUpdated }) 
   const handleDateChange = (date) => {
     const formattedDate = format(date, 'dd-MM-yyyy');
     setBillData({ ...billData, date: formattedDate });
+    console.log('date: ', formattedDate);
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setBillData({ ...billData, [name]: value });
-    console.log(userId);
-    
   };
 
   const handleSubmit = async (e) => {
-    console.log("USERID:", userId);
-    console.log(billToEdit);
-
     e.preventDefault();
 
-    // Thêm userId vào billData
-    //const updatedBillData = { ...billData, userId};
+    const updatedBillData = {
+      ...billData,
+      userId: userId || billData.userId,
+    };
 
     try {
       const response = await fetch(`http://127.0.0.1:5000/update-bill/${billToEdit.id}`, {
@@ -63,14 +53,15 @@ const UpdateBillModal = ({ isOpen, onRequestClose, billToEdit, onBillUpdated }) 
         headers: {
           'Content-Type': 'application/json',
         },  
-        body: JSON.stringify(billData),
+        body: JSON.stringify(updatedBillData),
       });
 
       if (response.ok) {
         const updatedBill = await response.json();
-        onBillUpdated(updatedBill); // Notify parent about the updated bill
+        onBillUpdated(updatedBill);
         alert('Bill updated successfully!');
-        onRequestClose(); // Close modal
+
+        onRequestClose();
       } else {
         const errorData = await response.json();
         alert(`Error: ${errorData.message || response.statusText}`);
@@ -81,8 +72,6 @@ const UpdateBillModal = ({ isOpen, onRequestClose, billToEdit, onBillUpdated }) 
     }
   };
 
-  console.log(billData);
-
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose} className="modal" overlayClassName="overlay">
       <form onSubmit={handleSubmit}>
@@ -92,15 +81,6 @@ const UpdateBillModal = ({ isOpen, onRequestClose, billToEdit, onBillUpdated }) 
             <option value="">Select Type</option>
             <option value="THU">THU</option>
             <option value="CHI">CHI</option>
-          </select>
-        </div>
-
-        <div>
-          <label>Source:</label>
-          <select name="source" value={billData.source} onChange={handleChange} required>
-            <option value="">Select Source</option>
-            <option value="CHUYỂN KHOẢN">CHUYỂN KHOẢN</option>
-            <option value="TIỀN MẶT">TIỀN MẶT</option>
           </select>
         </div>
 

@@ -4,7 +4,7 @@ import { login } from '~/services/authService';
 import { AppContext } from '~/contexts/appContext';
 
 const Login = () => {
-  const { setUserId, userId } = useContext(AppContext);
+  const { setUserId, userId, setBudget } = useContext(AppContext);
   console.log("User ID:", userId); // Kiểm tra giá trị userId từ context
 
   const [username, setUsername] = useState('');
@@ -26,13 +26,19 @@ const Login = () => {
     setMessage(''); // Xóa thông báo cũ
 
     try {
-      const response = await login(username, password);
+      const response = await login(username, password);      
+
       const userId = response.data.user_info.user_id; // Lấy user_id từ phản hồi API
+      const budget = response.data.user_info.budget;
+      
+      setBudget(budget); // Lưu budget vào context
       setUserId(userId); // Lưu user_id vào context
-      localStorage.setItem('user_id', userId); // Lưu vào localStorage
       setMessage(response.data.message);
+
+      localStorage.setItem('user_id', userId); // Lưu vào localStorage
+      localStorage.setItem('budget', budget); // Lưu vào localStorage
       navigate('/dashboard'); // Chuyển hướng tới dashboard
-      console.log(userId);
+      // console.log(response.data.user_info.user_id); 
       
     } catch (error) {
       if (error.response && error.response.data) {

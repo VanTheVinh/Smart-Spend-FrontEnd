@@ -9,7 +9,14 @@ import 'react-datepicker/dist/react-datepicker.css';
 Modal.setAppElement('#root');
 
 const UpdateCategory = ({ isOpen, onRequestClose, category }) => {
-  const { categories, setCategories } = useContext(AppContext);
+  const { setCategories, userBudget } = useContext(AppContext);
+
+  const formatCurrency = (amount) => {
+    if (typeof amount === 'string') {
+      amount = parseFloat(amount); // Nếu amount là chuỗi, chuyển đổi thành số
+    }
+    return amount.toLocaleString('vi-VN'); // Định dạng theo chuẩn Việt Nam
+  };
 
   // Khởi tạo state cho categoryData với giá trị hiện tại của category
   const [categoryData, setCategoryData] = useState({
@@ -21,7 +28,9 @@ const UpdateCategory = ({ isOpen, onRequestClose, category }) => {
     user_id: category?.user_id || '',
   });
 
-  const [selectedType, setSelectedType] = useState(category?.category_type || '');
+  const [selectedType, setSelectedType] = useState(
+    category?.category_type || '',
+  );
 
   const handleDateChange = (date) => {
     const isoDate = format(date, 'dd-MM-yyyy');
@@ -34,7 +43,26 @@ const UpdateCategory = ({ isOpen, onRequestClose, category }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setCategoryData({ ...categoryData, [name]: value });
+
+    if (name === 'percentage_limit') {
+      let newPercentageLimit = Math.min(Math.max(parseFloat(value) || 0, 0), 100); // Giới hạn tối đa là 100
+      const newAmount = (newPercentageLimit / 100) * userBudget; // Tính toán amount dựa trên ngân sách
+      setCategoryData({
+        ...categoryData,
+        percentage_limit: newPercentageLimit,
+        amount: Math.round(newAmount),
+      });
+    } else if (name === 'amount') {
+      const newAmount = parseFloat(value) || 0;
+      const newPercentageLimit = Math.min((newAmount / userBudget) * 100, 100); // Tính percentage_limit và giới hạn không quá 100
+      setCategoryData({
+        ...categoryData,
+        amount: value,
+        percentage_limit: Math.round(newPercentageLimit),
+      });
+    } else {
+      setCategoryData({ ...categoryData, [name]: value });
+    }
   };
 
   const handleCategoryTypeChange = (e) => {
@@ -50,13 +78,16 @@ const UpdateCategory = ({ isOpen, onRequestClose, category }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://127.0.0.1:5000/update-category/${category.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `http://127.0.0.1:5000/update-category/${category.id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(categoryData),
         },
-        body: JSON.stringify(categoryData),
-      });
+      );
 
       if (response.ok) {
         const result = await response.json();
@@ -65,8 +96,8 @@ const UpdateCategory = ({ isOpen, onRequestClose, category }) => {
         // Cập nhật danh sách categories sau khi sửa
         setCategories((prevCategories) =>
           prevCategories.map((cat) =>
-            cat.id === category.id ? { ...cat, ...result.category } : cat
-          )
+            cat.id === category.id ? { ...cat, ...result.category } : cat,
+          ),
         );
 
         alert('Category updated successfully!');
@@ -137,6 +168,7 @@ const UpdateCategory = ({ isOpen, onRequestClose, category }) => {
             onChange={handleChange}
             required
           />
+          {/* <p>Formatted Amount: {formatCurrency(categoryData.amount)}</p> */}
         </div>
         <div>
           <label>Time Frame:</label>
