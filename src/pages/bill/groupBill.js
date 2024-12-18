@@ -1,9 +1,13 @@
 import BillList from '.';
 
 const GroupBill = ({ userId, groupId }) => {
+
   return (
     <div>
-      <BillList userId={userId} groupId={groupId} />
+      <BillList
+        userId={userId}
+        groupId={groupId}
+      />
     </div>
   );
 };

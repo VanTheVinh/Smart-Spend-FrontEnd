@@ -11,6 +11,9 @@ const AddBillModal = ({ onBillAdded, groupId }) => {
   const { userId, categories, routeBill } = useContext(AppContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // console.log('Group ID on ADDBILL:', groupId);
+  
+
   const [billData, setBillData] = useState({
     type: '',
     amount: '',
@@ -18,6 +21,7 @@ const AddBillModal = ({ onBillAdded, groupId }) => {
     category_id: '',
     description: '',
     user_id: parseInt(userId),
+    group_id: parseInt(groupId),
   });
 
   const [selectedType, setSelectedType] = useState('');
@@ -75,6 +79,9 @@ const AddBillModal = ({ onBillAdded, groupId }) => {
             categories.find((cat) => cat.id === billData.category_id)
               ?.category_name || 'Unknown',
         });
+
+        console.log('Bill Data: ', billData);
+        
 
         alert('Bill added successfully!');
         setBillData({

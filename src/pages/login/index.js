@@ -1,25 +1,51 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { login } from '~/services/authService';
 import { AppContext } from '~/contexts/appContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const Login = () => {
-  const { setUserId, userId, setBudget } = useContext(AppContext);
-  console.log("User ID:", userId); // Kiểm tra giá trị userId từ context
-
+  const { setUserId, setBudget } = useContext(AppContext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false); // Trạng thái tải
+  const [passwordVisible, setPasswordVisible] = useState(false); // Trạng thái hiển thị mật khẩu
   const navigate = useNavigate();
+
+  const validateForm = () => {
+    if (!username.trim()) {
+      setMessage('Vui lòng điền tên người dùng.');
+      return false;
+    }
+    if (!password.trim()) {
+      setMessage('Vui lòng điền mật khẩu.');
+      return false;
+    }
+
+    // Kiểm tra định dạng tên người dùng (chỉ cho phép chữ và số, từ 3-15 ký tự)
+    const usernameRegex = /^[a-zA-Z0-9_]{3,15}$/;
+    if (!usernameRegex.test(username)) {
+      setMessage('Tên người dùng chỉ được chứa chữ cái, số và dấu gạch dưới, từ 3-15 ký tự.');
+      return false;
+    }
+
+    // Kiểm tra mật khẩu (ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường và số)
+    const passwordRegex = /^(?=.*\d)[A-Za-z\d]{6,}$/;
+    if (!passwordRegex.test(password)) {
+      setMessage('Mật khẩu phải có ít nhất 6 ký tự,  một chữ cái viết thường và một chữ số.');
+      return false;
+    }
+
+    return true;
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Kiểm tra trường nhập liệu
-    if (!username.trim() || !password.trim()) {
-      setMessage('Vui lòng điền đầy đủ tên người dùng và mật khẩu.');
-      return;
+    if (!validateForm()) {
+      return; // Nếu form không hợp lệ, dừng lại
     }
 
     setLoading(true);
@@ -38,8 +64,7 @@ const Login = () => {
       localStorage.setItem('user_id', userId); // Lưu vào localStorage
       localStorage.setItem('budget', budget); // Lưu vào localStorage
       navigate('/dashboard'); // Chuyển hướng tới dashboard
-      // console.log(response.data.user_info.user_id); 
-      
+
     } catch (error) {
       if (error.response && error.response.data) {
         setMessage(error.response.data.message); // Hiển thị thông báo từ server
@@ -67,19 +92,36 @@ const Login = () => {
         </div>
         <div>
           <label htmlFor="password">Mật Khẩu:</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Nhập mật khẩu"
-          />
+          <div style={{ position: 'relative' }}>
+            <input
+              id="password"
+              type={passwordVisible ? 'text' : 'password'} // Hiển thị mật khẩu nếu passwordVisible là true
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Nhập mật khẩu"
+            />
+            
+            <FontAwesomeIcon
+              icon={passwordVisible ? faEyeSlash : faEye} // Hiển thị icon tương ứng
+              onClick={() => setPasswordVisible(!passwordVisible)} // Đổi trạng thái hiển thị mật khẩu
+              style={{
+                position: 'absolute',
+                right: '10px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                cursor: 'pointer',
+              }}
+            />
+          </div>
         </div>
+        {message && <p style={{ color: 'red' }}>{message}</p>}
         <button type="submit" disabled={loading}>
           {loading ? 'Đang xử lý...' : 'Đăng Nhập'}
         </button>
+        <div>
+          <Link to="/register">Đăng ký</Link>
+        </div>
       </form>
-      {message && <p style={{ color: 'red' }}>{message}</p>}
     </div>
   );
 };

@@ -33,13 +33,12 @@ const GroupDetail = () => {
   const [editingMemberId, setEditingMemberId] = useState(null);
   const [memberAmount, setMemberAmount] = useState('');
 
-  console.log('userId', userId);
-  
+  // console.log('userId', userId);
 
   const fetchGroupDetail = async () => {
     try {
-      console.log('UserId: ', userId);
-      
+      // console.log('UserId: ', userId);
+
       const data = await getGroupDetail(groupId);
       setGroup(data.group);
       setGroupDetails({
@@ -108,7 +107,12 @@ const GroupDetail = () => {
         return;
       }
 
-      const response = await updateMemberAmount(groupId, memberId, amount, userId);
+      const response = await updateMemberAmount(
+        groupId,
+        memberId,
+        amount,
+        userId,
+      );
       fetchGroupDetail();
       fetchMembers();
 
@@ -158,17 +162,6 @@ const GroupDetail = () => {
 
   const handleUpdateGroupDetails = async () => {
     try {
-      // console.log('groupDetails', groupDetails);
-      // console.log('grid', groupId);
-      
-      // Ép kiểu amount về number trước khi gửi
-    // const formatGroupDetails = {
-    //   ...groupDetails,
-    //   amount: Number(groupDetails.amount), // Ép kiểu thành number
-    // };
-    // console.log('groupDetails', groupDetails);
-    
-
       const response = await updateGroupDetail(groupId, groupDetails);
       fetchGroupDetail();
       alert(response.message || 'Cập nhật thông tin nhóm thành công!');
@@ -191,7 +184,8 @@ const GroupDetail = () => {
 
   const isAdmin = () => {
     return members.some(
-      (member) => member.user_id === parseInt(userId) && member.role === 'admin',
+      (member) =>
+        member.user_id === parseInt(userId) && member.role === 'admin',
     );
   };
 
@@ -208,6 +202,10 @@ const GroupDetail = () => {
           </p>
           <p>
             <strong>Ngân sách nhóm:</strong> {formatCurrency(group.amount)} đ
+          </p>
+          <p>
+            <strong>Ngân sách thực tế:</strong>{' '}
+            {formatCurrency(group.actual_amount)} đ
           </p>
           {isAdmin() && (
             <button onClick={handleEditGroupToggle}>Chỉnh sửa nhóm</button>

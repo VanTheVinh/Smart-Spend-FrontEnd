@@ -1,10 +1,16 @@
-// BudgetUpdate.js
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { updateUser } from '~/services/userService';
 
 const BudgetUpdate = ({ userId, currentBudget, onUpdateSuccess }) => {
   const [newBudget, setNewBudget] = useState(currentBudget); // Trạng thái ngân sách mới
   const [isEditing, setIsEditing] = useState(false); // Trạng thái cho phép chỉnh sửa ngân sách
+
+  // Đồng bộ newBudget với currentBudget khi chuyển sang chế độ chỉnh sửa
+  useEffect(() => {
+    if (isEditing) {
+      setNewBudget(currentBudget); // Cập nhật giá trị mới cho input
+    }
+  }, [isEditing, currentBudget]);
 
   // Hàm cập nhật ngân sách mới
   const handleUpdateBudget = async () => {
@@ -21,9 +27,13 @@ const BudgetUpdate = ({ userId, currentBudget, onUpdateSuccess }) => {
     }
   };
 
+  const formatCurrency = (budget) => {
+    return Number(budget).toLocaleString('vi-VN') + ' đ';
+  };
+
   return (
     <div>
-      <h3>Ngân sách của bạn: {currentBudget}</h3>
+      <h3>Ngân sách của bạn: {formatCurrency(currentBudget)}</h3>
       
       {/* Nếu đang chỉnh sửa, hiển thị ô input */}
       {isEditing ? (

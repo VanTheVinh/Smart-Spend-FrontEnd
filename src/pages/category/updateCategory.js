@@ -1,24 +1,24 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Modal from 'react-modal';
 import { AppContext } from '~/contexts/appContext';
 import { format, parse } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import axios from 'axios';
+import { getUserInfo } from '~/services/userService';
 
 // Cấu hình mặc định cho Modal
 Modal.setAppElement('#root');
 
-const UpdateCategory = ({ isOpen, onRequestClose, category }) => {
-  const { setCategories, userBudget } = useContext(AppContext);
+const UpdateCategory = ({
+  isOpen,
+  onRequestClose,
+  category,
+  onUpdateSuccess,
+  totalPercentageLimit,
+}) => {
+  const { setCategories } = useContext(AppContext);
 
-  const formatCurrency = (amount) => {
-    if (typeof amount === 'string') {
-      amount = parseFloat(amount); // Nếu amount là chuỗi, chuyển đổi thành số
-    }
-    return amount.toLocaleString('vi-VN'); // Định dạng theo chuẩn Việt Nam
-  };
-
-  // Khởi tạo state cho categoryData với giá trị hiện tại của category
   const [categoryData, setCategoryData] = useState({
     category_type: category?.category_type || '',
     category_name: category?.category_name || '',
@@ -31,6 +31,34 @@ const UpdateCategory = ({ isOpen, onRequestClose, category }) => {
   const [selectedType, setSelectedType] = useState(
     category?.category_type || '',
   );
+  const [budget, setBudget] = useState(0);
+  const [percentageLimitCurrent, setPercentageLimitCurrent] = useState(0);
+  
+
+  // Lấy thông tin người dùng
+  useEffect(() => {
+    setPercentageLimitCurrent(Number(categoryData.percentage_limit));
+    if (category?.user_id) {
+      const fetchUserBudget = async () => {
+        try {
+          const userInfo = await getUserInfo(category.user_id);
+          setBudget(userInfo.budget); // Lấy `budget` từ userInfo
+        } catch (error) {
+          console.error('Lỗi khi lấy thông tin người dùng:', error);
+          setBudget(0); // Mặc định nếu có lỗi
+        }
+      };
+
+      fetchUserBudget();
+    }
+  }, [category?.user_id]);
+
+  const formatCurrency = (amount) => {
+    if (typeof amount === 'string') {
+      amount = parseFloat(amount); // Nếu amount là chuỗi, chuyển đổi thành số
+    }
+    return amount.toLocaleString('vi-VN'); // Định dạng theo chuẩn Việt Nam
+  };
 
   const handleDateChange = (date) => {
     const isoDate = format(date, 'dd-MM-yyyy');
@@ -42,22 +70,42 @@ const UpdateCategory = ({ isOpen, onRequestClose, category }) => {
     : null;
 
   const handleChange = (e) => {
+    // console.log('totalPercentageLimit: ', totalPercentageLimit);
+    // console.log('totalPercentageLimit current: ', percentageLimitCurrent);
+
     const { name, value } = e.target;
 
+    const percentageLimit = 100 - totalPercentageLimit + percentageLimitCurrent;
+
     if (name === 'percentage_limit') {
-      let newPercentageLimit = Math.min(Math.max(parseFloat(value) || 0, 0), 100); // Giới hạn tối đa là 100
-      const newAmount = (newPercentageLimit / 100) * userBudget; // Tính toán amount dựa trên ngân sách
+      let newPercentageLimit = Math.min(
+        Math.max(parseFloat(value) || 0, 0), percentageLimit,
+      ); // Giới hạn tối đa là 100
+      const newAmount = (newPercentageLimit / 100) * budget; // Tính toán amount dựa trên `budget`
       setCategoryData({
         ...categoryData,
         percentage_limit: newPercentageLimit,
         amount: Math.round(newAmount),
       });
     } else if (name === 'amount') {
-      const newAmount = parseFloat(value) || 0;
-      const newPercentageLimit = Math.min((newAmount / userBudget) * 100, 100); // Tính percentage_limit và giới hạn không quá 100
+      let newAmount = parseFloat(value) || 0;
+
+      // Tính toán giới hạn của amount dựa trên totalPercentageLimit
+      const maxAmount = (percentageLimit / 100) * budget;
+
+      // Đảm bảo amount không vượt quá giới hạn maxAmount
+      if (newAmount > maxAmount) {
+        newAmount = maxAmount; // Giới hạn amount không vượt quá maxAmount
+      }
+
+      const newPercentageLimit = Math.min(
+        (newAmount / budget) * 100,
+        percentageLimit,
+      ); // Tính percentage_limit và giới hạn không quá 100
+
       setCategoryData({
         ...categoryData,
-        amount: value,
+        amount: newAmount, // Cập nhật amount với giá trị không vượt quá giới hạn
         percentage_limit: Math.round(newPercentageLimit),
       });
     } else {
@@ -89,6 +137,8 @@ const UpdateCategory = ({ isOpen, onRequestClose, category }) => {
         },
       );
 
+      console.log('Response:', response);
+
       if (response.ok) {
         const result = await response.json();
         console.log('Category updated:', result);
@@ -100,7 +150,8 @@ const UpdateCategory = ({ isOpen, onRequestClose, category }) => {
           ),
         );
 
-        alert('Category updated successfully!');
+        alert('Cập nhật danh mục thành công!');
+        onUpdateSuccess(); // Gọi hàm callback để cập nhật lại danh sách categories
         onRequestClose(); // Đóng modal sau khi submit thành công
       } else {
         const errorData = await response.json();

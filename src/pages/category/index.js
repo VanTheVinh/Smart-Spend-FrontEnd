@@ -1,35 +1,39 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { AppContext } from '~/contexts/appContext'; // Import AppContext nếu cần (tùy vào yêu cầu)
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+
+import { AppContext } from '~/contexts/appContext';
 import Category from './addCategory';
 import UpdateCategory from './updateCategory';
 import DeleteCategory from './deleteCategory';
-import { getCategoryByUserId } from '~/services/categoryService'; // Import hàm từ service
+import { getCategoryByUserId } from '~/services/categoryService';
 import BudgetUpdate from '~/components/user/BudgetUpdate';
-import { getUserInfo } from '~/services/userService'; // Giả sử getUserInfo là service để lấy thông tin người dùng
+import { getUserInfo } from '~/services/userService';
 
 const CategoryList = () => {
   const { userId, categories, setCategories } = useContext(AppContext);
-  const [budget, setBudget] = useState(null); // State để lưu ngân sách
+  const [budget, setBudget] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal chỉnh sửa
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Modal xóa
-  const [selectedCategory, setSelectedCategory] = useState(null); // Category đang chọn để sửa
-  const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false); // Modal cập nhật ngân sách
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [filterType, setFilterType] = useState(''); // State để lưu loại lọc (THU hoặc CHI)
+  const [totalPercentageLimit, setTotalPercentageLimit] = useState(0); // State lưu tổng percentage_limit
 
-  // Hàm định dạng tiền tệ
+
   const formatCurrency = (amount) => {
     if (typeof amount === 'string') {
-      amount = parseFloat(amount); // Nếu amount là chuỗi, chuyển đổi thành số
+      amount = parseFloat(amount);
     }
-    return amount.toLocaleString('vi-VN'); // Định dạng theo chuẩn Việt Nam
+    return amount.toLocaleString('vi-VN');
   };
 
   const fetchCategories = async () => {
-    if (!userId) return; // Không thực hiện nếu userId chưa được thiết lập
+    if (!userId) return;
     try {
       const data = await getCategoryByUserId(userId);
-      setCategories(data); // Cập nhật danh sách category trong AppContext
+      setCategories(data);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -42,8 +46,8 @@ const CategoryList = () => {
     if (!userId) return;
     try {
       const data = await getUserInfo(userId);
-      setBudget(data.budget); // Cập nhật ngân sách
-      setLoading(false); // Đã lấy xong dữ liệu
+      setBudget(data.budget);
+      setLoading(false);
     } catch (error) {
       console.error('Lỗi khi lấy thông tin người dùng:', error);
       setError(error.message);
@@ -53,10 +57,23 @@ const CategoryList = () => {
 
   useEffect(() => {
     if (userId) {
-      fetchCategories(); // Lấy danh sách category khi có userId
-      fetchUserInfo(); // Lấy thông tin ngân sách khi có userId
+      fetchCategories();
+      fetchUserInfo();
     }
   }, [userId]);
+
+   // Tính tổng percentage_limit mỗi khi categories thay đổi
+   useEffect(() => {
+    if (categories && categories.length > 0) {
+      const total = categories.reduce((acc, category) => {
+        // Chuyển đổi percentage_limit sang số (nếu nó là chuỗi) trước khi cộng
+        return acc + parseFloat(category.percentage_limit || 0);
+      }, 0); // Khởi tạo với 0
+      setTotalPercentageLimit(total);
+    }
+    // console.log('Total percentage limit:', totalPercentageLimit);
+  }, [categories]);
+  
 
   const handleOpenUpdateModal = (category) => {
     setSelectedCategory(category);
@@ -78,23 +95,19 @@ const CategoryList = () => {
     setSelectedCategory(null);
   };
 
-  const handleOpenBudgetModal = () => {
-    if (budget !== null) {
-      setIsBudgetModalOpen(true); // Mở modal chỉ khi ngân sách đã được tải
-    }
-  };
-
-  const handleCloseBudgetModal = () => {
-    setIsBudgetModalOpen(false);
-  };
-
   const handleDeleteCategory = (categoryId) => {
     setCategories(categories.filter((category) => category.id !== categoryId));
   };
 
-  const handleUpdateBudget = (newBudget) => {
-    setBudget(newBudget); // Cập nhật ngân sách mới
-    setIsBudgetModalOpen(false);
+  // Hàm lọc danh sách category theo type (THU hoặc CHI)
+  const filteredCategories = categories.filter((category) => {
+    if (!filterType) return true; // Nếu không có lọc, hiển thị tất cả
+    return category.category_type === filterType;
+  });
+
+  const handleUpdateCategorySuccess = async () => {
+    await fetchCategories(); // Cập nhật lại danh sách categories
+    handleCloseModal(); // Đóng modal sau khi cập nhật thành công
   };
 
   if (loading) {
@@ -108,17 +121,30 @@ const CategoryList = () => {
   return (
     <div>
       <h2>Category List</h2>
+      
       <BudgetUpdate
         userId={userId}
         currentBudget={budget}
         onUpdateSuccess={(newBudget) => setBudget(newBudget)}
       />
       <Category />
-      <button onClick={handleOpenBudgetModal} disabled={budget === null}>
-        Update Budget
-      </button>{' '}
+      
+      {/* Dropdown lọc theo type */}
+      <div>
+        <label htmlFor="filterType">Filter by Type: </label>
+        <select
+          id="filterType"
+          value={filterType}
+          onChange={(e) => setFilterType(e.target.value)}
+        >
+          <option value="">All</option>
+          <option value="THU">THU</option>
+          <option value="CHI">CHI</option>
+        </select>
+      </div>
+
       {/* Disable khi chưa có ngân sách */}
-      {categories.length === 0 ? (
+      {filteredCategories.length === 0 ? (
         <p>No categories found.</p>
       ) : (
         <table border="1" cellPadding="10" cellSpacing="0">
@@ -134,33 +160,40 @@ const CategoryList = () => {
             </tr>
           </thead>
           <tbody>
-            {categories.map((category) => (
+            {filteredCategories.map((category) => (
               <tr key={category.id}>
-                <td>{category.category_type}</td>
+                <td>
+                  {category.category_type === 'THU' ? (
+                    <FontAwesomeIcon icon={faChevronUp} />
+                  ) : category.category_type === 'CHI' ? (
+                    <FontAwesomeIcon icon={faChevronDown} />
+                  ) : (
+                    'N/A'
+                  )}
+                </td>
                 <td>{category.category_name}</td>
                 <td>{category.percentage_limit}</td>
                 <td>{formatCurrency(category.amount)}</td>
                 <td>{formatCurrency(category.actual_amount)}</td>
                 <td>{category.time_frame}</td>
                 <td>
-                  <button onClick={() => handleOpenUpdateModal(category)}>
-                    Edit
-                  </button>
-                  <button onClick={() => handleOpenDeleteModal(category)}>
-                    Delete
-                  </button>
+                  <button onClick={() => handleOpenUpdateModal(category)}>Edit</button>
+                  <button onClick={() => handleOpenDeleteModal(category)}>Delete</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
+
       {/* Modal UpdateCategory */}
       {isModalOpen && (
         <UpdateCategory
           isOpen={isModalOpen}
           onRequestClose={handleCloseModal}
           category={selectedCategory}
+          onUpdateSuccess={handleUpdateCategorySuccess}
+          totalPercentageLimit={totalPercentageLimit}
         />
       )}
       {/* Modal DeleteCategory */}
@@ -172,9 +205,6 @@ const CategoryList = () => {
           onDelete={handleDeleteCategory}
         />
       )}
-      {/* Modal BudgetUpdate */}
-      {/* {isBudgetModalOpen && budget !== null && ( // Chỉ hiển thị modal nếu ngân sách đã có */}
-      {/* )} */}
     </div>
   );
 };

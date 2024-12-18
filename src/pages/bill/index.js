@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
 import AddBillModal from '../../components/bill/addBill';
 import UpdateBillModal from '../../components/bill/updateBill';
@@ -6,33 +8,36 @@ import DeleteBillModal from '../../components/bill/deteleBill';
 import { getBills } from '~/services/billService';
 import { getCategoryByUserId } from '~/services/categoryService';
 
-const BillList = ({ userId, groupId }) => {
+const BillList = ({ userId, groupId, onActionComplete }) => {
   const [bills, setBills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [filterType, setFilterType] = useState('ALL'); // Lọc theo ALL, THU, hoặc CHI
+  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' (tăng dần) hoặc 'desc' (giảm dần)
+  const [amountSortOrder, setAmountSortOrder] = useState('default'); // default, asc, desc
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [billToEdit, setBillToEdit] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [billToDelete, setBillToDelete] = useState(null);
   const [categoryNames, setCategoryNames] = useState({});
 
-  const userID = userId;
-
-  // Hàm dùng chung để lấy danh sách hóa đơn
   const fetchBillsData = async () => {
     try {
       let billData = [];
       if (groupId) {
-        // Nếu có groupId, lấy hóa đơn theo group_id và lọc các bill có is_group_bill = true
         billData = await getBills({ group_id: groupId });
         billData = billData.filter((bill) => bill.is_group_bill);
       } else {
-        // Nếu không có groupId, lấy hóa đơn theo user_id và lọc các bill có is_group_bill = false
-        console.log('UserID index:', userID);
-        
-        billData = await getBills({ user_id: userID });
-        billData = billData.filter((bill) => !bill.is_group_bill && Number(bill.user_id) === Number(userID));
+        billData = await getBills({ user_id: userId });
+        billData = billData.filter(
+          (bill) =>
+            !bill.is_group_bill && Number(bill.user_id) === Number(userId),
+        );
       }
+
+      // Sắp xếp theo ngày tăng dần
+      billData.sort((a, b) => new Date(a.date) - new Date(b.date));
+
       setBills(billData);
       setLoading(false);
     } catch (error) {
@@ -44,50 +49,41 @@ const BillList = ({ userId, groupId }) => {
 
   const fetchCategoryNames = async () => {
     try {
-      // 1. Lấy tất cả user_id từ bills
-      const userIds = [...new Set(bills.map((bill) => bill.user_id))]; // Loại bỏ user_id trùng lặp
-      // console.log('Unique User IDs:', userIds);
-  
+      const userIds = [...new Set(bills.map((bill) => bill.user_id))];
       const names = {};
-  
-      // 2. Gọi getCategoryByUserId cho từng user_id
+
       for (const userId of userIds) {
-        const categories = await getCategoryByUserId(userId); // Gọi API theo từng user_id
-        // console.log(`Categories for user_id ${userId}:`, categories);
-  
-        // 3. Lấy category_name tương ứng với từng bill.category_id
+        const categories = await getCategoryByUserId(userId);
+
         for (const bill of bills) {
-          const category = categories.find((category) => category.id === bill.category_id);
+          const category = categories.find(
+            (category) => category.id === bill.category_id,
+          );
           if (category) {
             names[bill.category_id] = category.category_name;
           }
         }
       }
-  
-      // 4. Lưu các tên danh mục vào state
+
       setCategoryNames(names);
     } catch (error) {
       console.error('Error fetching categories:', error);
     }
   };
-  
 
-  // Lấy danh sách hóa đơn ban đầu
   useEffect(() => {
-    if (userID) {
+    if (userId) {
       fetchBillsData();
     } else {
       console.log('UserID chưa có');
     }
-  }, [userId, groupId]); // Theo dõi sự thay đổi của userId và groupId
+  }, [userId, groupId]);
 
-  // Lấy tên danh mục từ API sau khi lấy xong danh sách hóa đơn
   useEffect(() => {
-    fetchCategoryNames();
     if (bills.length > 0) {
       fetchCategoryNames();
     }
-  }, [bills, userId]); // Theo dõi thay đổi của bills và userId
+  }, [bills, userId]);
 
   const handleEdit = (bill) => {
     setBillToEdit(bill);
@@ -99,8 +95,38 @@ const BillList = ({ userId, groupId }) => {
     setShowDeleteModal(true);
   };
 
+  const handleBillAdded = () => {
+    fetchBillsData();
+    onActionComplete();
+  };
+
+  const handleBillUpdated = () => {
+    fetchBillsData();
+    setShowUpdateModal(false);
+    onActionComplete();
+  };
+
   const handleBillDeleted = (deletedBillId) => {
-    setBills((prevBills) => prevBills.filter((bill) => bill.id !== deletedBillId));
+    setBills((prevBills) =>
+      prevBills.filter((bill) => bill.id !== deletedBillId),
+    );
+    onActionComplete();
+  };
+
+  // Lọc và sắp xếp hóa đơn
+  const filteredBills = bills
+    .filter((bill) => (filterType === 'ALL' ? true : bill.type === filterType))
+    .sort((a, b) => {
+      if (amountSortOrder === 'default') {
+        return new Date(a.date) - new Date(b.date); // Sắp xếp theo ngày nếu là mặc định
+      }
+      const amountA = a.amount;
+      const amountB = b.amount;
+      return amountSortOrder === 'asc' ? amountA - amountB : amountB - amountA;
+    });
+
+  const toggleAmountSortOrder = (order) => {
+    setAmountSortOrder(order);
   };
 
   if (loading) {
@@ -113,37 +139,64 @@ const BillList = ({ userId, groupId }) => {
 
   return (
     <div>
-      <h3>Bill List</h3>
-      {bills.length === 0 ? (
+      <h3>Danh sách hóa đơn</h3>
+      
+      {/* Bộ lọc */}
+      <div>
+        <label>Lọc:</label>
+        <select
+          value={filterType}
+          onChange={(e) => setFilterType(e.target.value)}
+        >
+          <option value="ALL">Tất cả</option>
+          <option value="THU">Thu nhập</option>
+          <option value="CHI">Chi tiêu</option>
+        </select>
+  
+        {/* Lọc theo số tiền */}
+        <label>Lọc theo số tiền:</label>
+        <select
+          value={amountSortOrder}
+          onChange={(e) => toggleAmountSortOrder(e.target.value)}
+        >
+          <option value="default">Mặc định</option>
+          <option value="asc">Tăng dần</option>
+          <option value="desc">Giảm dần</option>
+        </select>
+      </div>
+
+      {filteredBills.length === 0 ? (
         <p>No bills found.</p>
       ) : (
         <table border="1">
           <thead>
             <tr>
-              <th>ID</th>
               <th>Type</th>
-              <th>Amount</th>
-              <th>Date</th>
-              <th>Category ID</th>
               <th>Category Name</th>
+              <th>Amount</th>
               <th>Description</th>
+              <th>Date</th>
               <th>Created By</th>
-              <th>Group ID</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            {bills.map((bill) => (
+            {filteredBills.map((bill) => (
               <tr key={bill.id}>
-                <td>{bill.id}</td>
-                <td>{bill.type}</td>
-                <td>{bill.amount}</td>
-                <td>{bill.date}</td>
-                <td>{bill.category_id}</td>
+                <td>
+                  {bill.type === 'THU' ? (
+                    <FontAwesomeIcon icon={faChevronUp} />
+                  ) : bill.type === 'CHI' ? (
+                    <FontAwesomeIcon icon={faChevronDown} />
+                  ) : (
+                    'N/A'
+                  )}
+                </td>
                 <td>{categoryNames[bill.category_id] || 'Loading...'}</td>
+                <td>{bill.amount}</td>
                 <td>{bill.description}</td>
+                <td>{bill.date}</td>
                 <td>{bill.user_id}</td>
-                <td>{bill.group_id}</td>
                 <td>
                   <button onClick={() => handleEdit(bill)}>Edit</button>
                   <button onClick={() => handleDelete(bill)}>Delete</button>
@@ -154,7 +207,13 @@ const BillList = ({ userId, groupId }) => {
         </table>
       )}
 
-      <AddBillModal onBillAdded={fetchBillsData} groupId={groupId} />
+      <AddBillModal
+        onBillAdded={() => {
+          fetchBillsData();
+          handleBillAdded();
+        }}
+        groupId={groupId}
+      />
 
       <UpdateBillModal
         isOpen={showUpdateModal}
@@ -163,6 +222,7 @@ const BillList = ({ userId, groupId }) => {
         onBillUpdated={() => {
           fetchBillsData();
           setShowUpdateModal(false);
+          handleBillUpdated();
         }}
       />
 
