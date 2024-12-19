@@ -6,6 +6,7 @@ export const AppContext = createContext();
 // Tạo provider để cung cấp giá trị cho context
 export const AppProvider = ({ children }) => {
   const [userId, setUserId] = useState('');
+  const [userBudget, setBudget] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [categories, setCategories] = useState([]);
 
@@ -14,6 +15,12 @@ export const AppProvider = ({ children }) => {
     const storedUserId = localStorage.getItem('user_id');
     if (storedUserId) {
       setUserId(storedUserId);
+    }
+
+    // Lấy budget từ localStorage khi ứng dụng khởi chạy
+    const storedBudget = localStorage.getItem('budget');
+    if (storedBudget) {
+      setBudget(storedBudget);
     }
   }, []);
 
@@ -24,6 +31,19 @@ export const AppProvider = ({ children }) => {
       return;
     }
 
+    const fetchUserBudget = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/get-user-budget?user_id=${userId}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        setBudget(data.budget); // Giả định API trả về trường 'budget'
+      } catch (error) {
+        console.error('Error fetching user budget:', error);
+      }
+    };
+
     const fetchCategories = async () => {
       try {
         const response = await fetch(`http://127.0.0.1:5000/get-categories?user_id=${userId}`);
@@ -31,18 +51,18 @@ export const AppProvider = ({ children }) => {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
-        console.log(data); // In dữ liệu categories để kiểm tra
         setCategories(data); // Lưu danh sách categories vào context
-      } catch (error) {
+      } catch (error) { 
         console.error('Error fetching categories:', error);
       }
     };
   
+    fetchUserBudget(); // Gọi API lấy user budget và set giá trị cho context
     fetchCategories();
   }, [userId]); // Chỉ chạy 1 lần khi component được mount
 
   return (
-    <AppContext.Provider value={{ userId, setUserId, categoryId, setCategoryId, categories, setCategories }}>
+    <AppContext.Provider value={{ userId, setUserId, userBudget, setBudget, categoryId, setCategoryId, categories, setCategories }}>
       {children}
     </AppContext.Provider>
   );

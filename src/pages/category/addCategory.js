@@ -53,7 +53,7 @@ const Category = () => {
     try {
       const response = await fetch('http://127.0.0.1:5000/add-category', {
         method: 'POST',
-        headers: {  
+        headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(categoryData),
@@ -63,10 +63,13 @@ const Category = () => {
         const result = await response.json();
         console.log('Category added:', result);
 
-      // Kiểm tra xem có trường category không, nếu có thì cập nhật danh sách categories
-      if (result && result.category) {
-        setCategories((prevCategories) => [result.category, ...prevCategories]);  // Thêm category mới vào đầu
-      }
+        // Kiểm tra xem có trường category không, nếu có thì cập nhật danh sách categories
+        if (result && result.category) {
+          setCategories((prevCategories) => [
+            result.category,
+            ...prevCategories,
+          ]); // Thêm category mới vào đầu
+        }
 
         alert('Category added successfully!');
         setCategoryData({
@@ -92,32 +95,45 @@ const Category = () => {
 
   return (
     <div>
-      <button onClick={() => setIsModalOpen(true)}>Add New Category</button>
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="bg-teal-500 text-white px-4 py-2 rounded-xl hover:bg-teal-600 "
+      >
+        <i className="fa-solid fa-plus"></i>{' '}
+        {/* Trash can icon */}
+      </button>
+
       <Modal
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}
-        contentLabel="Add New Category"
-        className="modal"
-        overlayClassName="overlay"
+        className="modal max-w-lg w-full p-9 bg-white rounded-lg shadow-xl"
+        overlayClassName="overlay fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center"
       >
-        <h2>Add New Category</h2>
-        <form onSubmit={handleSubmit}>
+        <h2 className="text-2xl font-semibold mb-4 text-center">Thêm danh mục</h2>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Category Type */}
           <div>
-            <label>Category Type:</label>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Loại danh mục:
+            </label>
             <select
               name="category_type"
               value={selectedType}
               onChange={handleCategoryTypeChange}
               required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
             >
-              <option value="">Select Type</option>
+              <option value="">Chọn loại</option>
               <option value="THU">THU</option>
               <option value="CHI">CHI</option>
             </select>
           </div>
 
+          {/* Category Name */}
           <div>
-            <label>Category Name:</label>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Tên danh mục:
+            </label>
             <input
               type="text"
               name="category_name"
@@ -125,44 +141,71 @@ const Category = () => {
               onChange={handleChange}
               required
               disabled={!selectedType}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
 
+          {/* Percentage Limit */}
           <div>
-            <label>Percentage Limit:</label>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Giới hạn phần trăm:
+            </label>
             <input
               type="number"
               name="percentage_limit"
               value={categoryData.percentage_limit}
               onChange={handleChange}
               required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
+
+          {/* Amount */}
           <div>
-            <label>Amount:</label>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Số tiền:
+            </label>
             <input
               type="number"
               name="amount"
               value={categoryData.amount}
               onChange={handleChange}
               required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
+
+          {/* Time Frame */}
           <div>
-            <label>Time Frame:</label>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Time Frame:
+            </label>
             <DatePicker
               selected={selectedDate}
               onChange={handleDateChange}
               dateFormat="dd/MM/yyyy"
               placeholderText="dd/mm/yyyy"
-              className="custom-datepicker"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+              style={{ width: '100%' }}
             />
           </div>
 
-          <button type="submit">Add Category</button>
-          <button type="button" onClick={() => setIsModalOpen(false)}>
-            Cancel
-          </button>
+          {/* Buttons */}
+          <div className="flex justify-between gap-4">
+            <button
+              type="submit"
+              className="bg-teal-500 text-white px-6 py-2 rounded-xl hover:bg-teal-700"
+            >
+              Thêm danh mục
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              className="bg-gray-300 font-bold text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-400"
+            >
+              Đóng
+            </button>
+          </div>
         </form>
       </Modal>
     </div>
