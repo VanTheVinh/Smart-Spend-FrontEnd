@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import Login from '~/pages/login';
 import Register from '~/pages/register';
 import Dashboard from '~/components/dashboard';
@@ -9,10 +9,12 @@ import CategoryList from '~/pages/category';
 import Group from '~/pages/group';
 import GroupDetail from '~/pages/group/groupDetail';
 import Home from '~/pages/home';
+import Profile from '~/pages/profile';
 
 const AppRouter = () => {
   return (
     <Routes>
+      <Route path="/" element={<Navigate to="/login" />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route element={<Dashboard />}>
@@ -22,6 +24,7 @@ const AppRouter = () => {
         <Route path="/category" element={<CategoryList />} />
         <Route path="/group" element={<Group />} />
         <Route path="/group-detail/:groupId" element={<GroupDetail />} />
+        <Route path="/profile" element={<Profile />} />
       </Route>
     </Routes>
   );

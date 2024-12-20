@@ -79,7 +79,7 @@ const UpdateBillModal = ({ isOpen, onRequestClose, billToEdit, onBillUpdated }) 
       className="modal max-w-lg w-full p-6 bg-white rounded-xl shadow-xl"
       overlayClassName="overlay fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center"
     >
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Cập nhật hóa đơn</h2>
+      <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Cập nhật hóa đơn</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Bill Type */}
         <div>
@@ -155,7 +155,7 @@ const UpdateBillModal = ({ isOpen, onRequestClose, billToEdit, onBillUpdated }) 
         <div className="flex justify-between gap-4">
           <button
             type="submit"
-            className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+            className="bg-teal-600 text-white font-bold px-6 py-2 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
           >
             Cập nhật
           </button>

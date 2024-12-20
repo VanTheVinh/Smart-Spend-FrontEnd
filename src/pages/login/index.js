@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { login } from '~/services/authService';
 import { AppContext } from '~/contexts/appContext';
 import { HiEye, HiEyeOff } from 'react-icons/hi';
@@ -13,8 +13,36 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // Trạng thái tải
+  const [passwordVisible, setPasswordVisible] = useState(false); // Trạng thái hiển thị mật khẩu
   const navigate = useNavigate();
+
+  const validateForm = () => {
+    if (!username.trim()) {
+      setMessage('Vui lòng điền tên người dùng.');
+      return false;
+    }
+    if (!password.trim()) {
+      setMessage('Vui lòng điền mật khẩu.');
+      return false;
+    }
+
+    // Kiểm tra định dạng tên người dùng (chỉ cho phép chữ và số, từ 3-15 ký tự)
+    const usernameRegex = /^[a-zA-Z0-9_]{3,15}$/;
+    if (!usernameRegex.test(username)) {
+      setMessage('Tên người dùng chỉ được chứa chữ cái, số và dấu gạch dưới, từ 3-15 ký tự.');
+      return false;
+    }
+
+    // Kiểm tra mật khẩu (ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường và số)
+    const passwordRegex = /^(?=.*\d)[A-Za-z\d]{6,}$/;
+    if (!passwordRegex.test(password)) {
+      setMessage('Mật khẩu phải có ít nhất 6 ký tự,  một chữ cái viết thường và một chữ số.');
+      return false;
+    }
+
+    return true;
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -39,7 +67,7 @@ const Login = () => {
 
       localStorage.setItem('user_id', userId); // Lưu vào localStorage
       localStorage.setItem('budget', budget); // Lưu vào localStorage
-      navigate('/dashboard'); // Chuyển hướng tới dashboard
+      navigate('/home'); // Chuyển hướng tới dashboard
       // console.log(response.data.user_info.user_id);
     } catch (error) {
       if (error.response && error.response.data) {
@@ -107,7 +135,7 @@ const Login = () => {
             className={`mt-3 w-full px-4 py-2.5 text-white font-bold rounded-md transition ${
               loading
                 ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-tealCustom hover:bg-teal-600'
+                : 'bg-tealCustom :hoverbg-teal-600'
             }`}
           >
             {loading ? 'Đang xử lý...' : 'Đăng nhập'}

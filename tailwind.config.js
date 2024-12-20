@@ -9,6 +9,7 @@ module.exports = {
         tealFirsttd: '#C9E4D6',
         tealDashboard: '#E8E8E8',
         tealBGDaskboard: '#F5F5F5',
+        hovercolor: '#9AE6B4',
       },
     },
   },

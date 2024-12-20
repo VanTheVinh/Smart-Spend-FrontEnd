@@ -12,6 +12,9 @@ const AddBillModal = ({ onBillAdded, groupId }) => {
   const { userId, categories, routeBill } = useContext(AppContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // console.log('Group ID on ADDBILL:', groupId);
+  
+
   const [billData, setBillData] = useState({
     type: '',
     amount: '',
@@ -19,6 +22,7 @@ const AddBillModal = ({ onBillAdded, groupId }) => {
     category_id: '',
     description: '',
     user_id: parseInt(userId),
+    group_id: parseInt(groupId),
   });
 
   const [selectedType, setSelectedType] = useState('');
@@ -77,6 +81,9 @@ const AddBillModal = ({ onBillAdded, groupId }) => {
               ?.category_name || 'Unknown',
         });
 
+        console.log('Bill Data: ', billData);
+        
+
         alert('Bill added successfully!');
         setBillData({
           type: '',
@@ -116,7 +123,7 @@ const AddBillModal = ({ onBillAdded, groupId }) => {
           className="modal max-w-lg w-full p-9 bg-white rounded-lg shadow-xl"
           overlayClassName="overlay fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center"
         >
-          <h2 className="text-2xl font-semibold mb-4 text-center">Thêm hóa đơn</h2>
+          <h2 className="text-2xl font-bold mb-4 text-center">Thêm hóa đơn</h2>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-gray-700 font-semibold mb-2">Loại hóa đơn:</label>
@@ -205,7 +212,7 @@ const AddBillModal = ({ onBillAdded, groupId }) => {
             <div className="flex justify-between gap-4">
               <button
                 type="submit"
-                className="bg-tealCustom text-white px-6 py-2 rounded-lg hover:bg-teal-600"
+                className="bg-tealCustom text-white font-bold px-6 py-2 rounded-lg hover:bg-teal-600"
               >
                 Thêm hóa đơn
               </button>

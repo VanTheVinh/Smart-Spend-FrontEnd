@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import AddBillModal from '../../components/bill/addBill';
 import UpdateBillModal from '../../components/bill/updateBill';
 import DeleteBillModal from '../../components/bill/deteleBill';
@@ -6,10 +8,13 @@ import { getBills } from '~/services/billService';
 import { getCategoryByUserId } from '~/services/categoryService';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
-const BillList = ({ userId, groupId }) => {
+const BillList = ({ userId, groupId, onActionComplete }) => {
   const [bills, setBills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [filterType, setFilterType] = useState('ALL'); // Lọc theo ALL, THU, hoặc CHI
+  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' (tăng dần) hoặc 'desc' (giảm dần)
+  const [amountSortOrder, setAmountSortOrder] = useState('default'); // default, asc, desc
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [billToEdit, setBillToEdit] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -32,6 +37,10 @@ const BillList = ({ userId, groupId }) => {
             !bill.is_group_bill && Number(bill.user_id) === Number(userID),
         );
       }
+
+      // Sắp xếp theo ngày tăng dần
+      billData.sort((a, b) => new Date(a.date) - new Date(b.date));
+
       setBills(billData);
       setLoading(false);
     } catch (error) {
@@ -45,8 +54,10 @@ const BillList = ({ userId, groupId }) => {
     try {
       const userIds = [...new Set(bills.map((bill) => bill.user_id))];
       const names = {};
+
       for (const userId of userIds) {
         const categories = await getCategoryByUserId(userId);
+
         for (const bill of bills) {
           const category = categories.find(
             (category) => category.id === bill.category_id,
@@ -63,7 +74,7 @@ const BillList = ({ userId, groupId }) => {
   };
 
   useEffect(() => {
-    if (userID) {
+    if (userId) {
       fetchBillsData();
     }
   }, [userId, groupId]);
@@ -74,9 +85,9 @@ const BillList = ({ userId, groupId }) => {
     }
   }, [bills, userId]);
 
-  const handleDropdownToggle = () => {
-    setShowDropdown(!showDropdown);
-  };
+  // const handleDropdownToggle = () => {
+  //   setShowDropdown(!showDropdown);
+  // };
 
   const handleEdit = (bill) => {
     setBillToEdit(bill);
@@ -88,10 +99,38 @@ const BillList = ({ userId, groupId }) => {
     setShowDeleteModal(true);
   };
 
+  const handleBillAdded = () => {
+    fetchBillsData();
+    onActionComplete();
+  };
+
+  const handleBillUpdated = () => {
+    fetchBillsData();
+    setShowUpdateModal(false);
+    onActionComplete();
+  };
+
   const handleBillDeleted = (deletedBillId) => {
     setBills((prevBills) =>
       prevBills.filter((bill) => bill.id !== deletedBillId),
     );
+    onActionComplete();
+  };
+
+  // Lọc và sắp xếp hóa đơn
+  const filteredBills = bills
+    .filter((bill) => (filterType === 'ALL' ? true : bill.type === filterType))
+    .sort((a, b) => {
+      if (amountSortOrder === 'default') {
+        return new Date(a.date) - new Date(b.date); // Sắp xếp theo ngày nếu là mặc định
+      }
+      const amountA = a.amount;
+      const amountB = b.amount;
+      return amountSortOrder === 'asc' ? amountA - amountB : amountB - amountA;
+    });
+
+  const toggleAmountSortOrder = (order) => {
+    setAmountSortOrder(order);
   };
 
   if (loading) {
@@ -105,13 +144,6 @@ const BillList = ({ userId, groupId }) => {
   return (
     <div className='flex flex-col justify-center'>
     <div className="p-10 bg-gray-100 min-h-screen">
-      {/* Khối User Bill */}
-      {/* <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-        <h4 className="text-lg font-semibold mb-2">User Bill</h4>
-        <p className="text-sm mb-1">Ngân sách của bạn: 2000000</p>
-        <button className="text-teal-500 underline text-sm">Chỉnh sửa ngân sách</button>
-      </div> */}
-  
       {/* Khối lớn chứa tiêu đề, nút và danh sách hóa đơn */}
       <div className="bg-white p-6 rounded-lg shadow-md">
         {/* Tiêu đề */}
@@ -188,6 +220,7 @@ const BillList = ({ userId, groupId }) => {
         onBillUpdated={() => {
           fetchBillsData();
           setShowUpdateModal(false);
+          handleBillUpdated();
         }}
       />
   

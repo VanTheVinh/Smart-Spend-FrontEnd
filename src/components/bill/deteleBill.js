@@ -32,17 +32,16 @@ const DeleteBillModal = ({ isOpen, onRequestClose, billToDelete, onBillDeleted }
     <Modal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
-      className="modal max-w-lg w-full p-6 bg-white rounded-xl shadow-xl"
+      className="modal max-w-lg w-full p-9 bg-white rounded-xl shadow-xl"
       overlayClassName="overlay fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center"
     >
-      <h2 className="text-2xl font-semibold text-red-600 mb-4 text-center">Xác nhận xóa hóa đơn</h2>
       <p className="text-gray-700 text-center mb-6">
-        Bạn chắc chắn muốn xóa hóa đơn <strong>"{billToDelete.description}"</strong>?
+        Bạn chắc chắn muốn xóa hóa đơn không?
       </p>
       <div className="flex justify-center gap-4">
         <button
           onClick={handleDelete}
-          className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition"
+          className="bg-red-600 text-white font-bold px-6 py-2 rounded-lg hover:bg-red-700 transition"
         >
           OK
         </button>

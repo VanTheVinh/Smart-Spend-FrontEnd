@@ -11,6 +11,9 @@ Modal.setAppElement('#root');
 const Category = () => {
   const { userId, categories, setCategories } = useContext(AppContext);
 
+  // Tổng ngân sách cố định
+  const totalBudget = 10000; // Ví dụ: 10,000 đơn vị tiền tệ
+
   const [categoryData, setCategoryData] = useState({
     category_type: '',
     category_name: '',
@@ -35,7 +38,29 @@ const Category = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setCategoryData({ ...categoryData, [name]: value });
+
+    if (name === 'percentage_limit') {
+      // Khi percentage_limit thay đổi, tính lại amount
+      const percentage = Math.min(Math.max(parseFloat(value) || 0, 0), 100); // Giới hạn trong khoảng 0-100
+      const newAmount = (percentage / 100) * totalBudget;
+      setCategoryData({
+        ...categoryData,
+        percentage_limit: percentage,
+        amount: Math.round(newAmount),
+      });
+    } else if (name === 'amount') {
+      // Khi amount thay đổi, tính lại percentage_limit
+      const newAmount = Math.max(parseFloat(value) || 0, 0);
+      const newPercentageLimit = Math.min((newAmount / totalBudget) * 100, 100);
+      setCategoryData({
+        ...categoryData,
+        amount: newAmount,
+        percentage_limit: Math.round(newPercentageLimit),
+      });
+    } else {
+      // Xử lý các trường khác
+      setCategoryData({ ...categoryData, [name]: value });
+    }
   };
 
   const handleCategoryTypeChange = (e) => {
@@ -65,10 +90,7 @@ const Category = () => {
 
         // Kiểm tra xem có trường category không, nếu có thì cập nhật danh sách categories
         if (result && result.category) {
-          setCategories((prevCategories) => [
-            result.category,
-            ...prevCategories,
-          ]); // Thêm category mới vào đầu
+          setCategories((prevCategories) => [result.category, ...prevCategories]); // Thêm category mới vào đầu
         }
 
         alert('Category added successfully!');

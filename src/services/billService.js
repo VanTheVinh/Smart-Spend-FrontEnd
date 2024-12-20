@@ -29,3 +29,14 @@ export const getBills = async (params) => {
     throw error; // Ném lỗi để xử lý ở nơi khác
   }
 };
+
+// Hàm lọc hóa đơn
+export const filterBills = async (params) => {
+  try {
+    const response = await axios.get(`${API_URL}/filter-bills`, { params });
+    return response.data; // Trả về danh sách hóa đơn đã lọc
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách hóa đơn:', error);
+    throw error; // Ném lỗi để xử lý ở nơi khác
+  }
+};

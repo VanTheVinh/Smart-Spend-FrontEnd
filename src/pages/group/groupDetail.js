@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import debounce from 'lodash/debounce';
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -34,13 +34,12 @@ const GroupDetail = () => {
   const [editingMemberId, setEditingMemberId] = useState(null);
   const [memberAmount, setMemberAmount] = useState('');
 
-  console.log('userId', userId);
-  
+  // console.log('userId', userId);
 
-  const fetchGroupDetail = async () => {
+  const fetchGroupDetail = useCallback(async () => {
     try {
-      console.log('UserId: ', userId);
-      
+      // console.log('UserId: ', userId);
+  
       const data = await getGroupDetail(groupId);
       setGroup(data.group);
       setGroupDetails({
@@ -52,23 +51,24 @@ const GroupDetail = () => {
     } catch (err) {
       setError('Không thể lấy thông tin nhóm.');
     }
-  };
-
-  const fetchMembers = async () => {
+  }, [groupId, userId]); 
+  
+  const fetchMembers = useCallback(async () => {
     try {
       const data = await getGroupMembers({ group_id: groupId });
       setMembers(data.members);
     } catch (err) {
       setError('Không thể lấy thông tin thành viên.');
     }
-  };
+  }, [groupId]);  // Thêm groupId vào dependencies của useCallback
 
   useEffect(() => {
     if (groupId) {
       fetchGroupDetail();
       fetchMembers();
     }
-  }, [userId, groupId]);
+  }, [groupId, fetchGroupDetail, fetchMembers]);
+  
 
   const handleSearch = async (query) => {
     if (!query.trim()) {
@@ -109,7 +109,12 @@ const GroupDetail = () => {
         return;
       }
 
-      const response = await updateMemberAmount(groupId, memberId, amount, userId);
+      const response = await updateMemberAmount(
+        groupId,
+        memberId,
+        amount,
+        userId,
+      );
       fetchGroupDetail();
       fetchMembers();
 
@@ -159,17 +164,6 @@ const GroupDetail = () => {
 
   const handleUpdateGroupDetails = async () => {
     try {
-      // console.log('groupDetails', groupDetails);
-      // console.log('grid', groupId);
-      
-      // Ép kiểu amount về number trước khi gửi
-    // const formatGroupDetails = {
-    //   ...groupDetails,
-    //   amount: Number(groupDetails.amount), // Ép kiểu thành number
-    // };
-    // console.log('groupDetails', groupDetails);
-    
-
       const response = await updateGroupDetail(groupId, groupDetails);
       fetchGroupDetail();
       alert(response.message || 'Cập nhật thông tin nhóm thành công!');
@@ -192,7 +186,8 @@ const GroupDetail = () => {
 
   const isAdmin = () => {
     return members.some(
-      (member) => member.user_id === parseInt(userId) && member.role === 'admin',
+      (member) =>
+        member.user_id === parseInt(userId) && member.role === 'admin',
     );
   };
 
@@ -209,6 +204,10 @@ const GroupDetail = () => {
           </p>
           <p className="text-gray-600 mb-4">
             <strong>Ngân sách nhóm:</strong> {formatCurrency(group.amount)} đ
+          </p>
+          <p>
+            <strong>Ngân sách thực tế:</strong>{' '}
+            {formatCurrency(group.actual_amount)} đ
           </p>
           {isAdmin() && (
             <button
@@ -257,7 +256,7 @@ const GroupDetail = () => {
           <div className="flex justify-end gap-4">
             <button
               onClick={handleUpdateGroupDetails}
-              className="px-4 py-2 bg-green-500 text-white font-medium rounded-md hover:bg-green-600"
+              className="px-4 py-2 bg-tealCustom text-white font-medium rounded-md hover:bg-green-600"
             >
               Lưu
             </button>
@@ -331,7 +330,7 @@ const GroupDetail = () => {
                             setEditingMemberId(member.user_id);
                             setMemberAmount(member.member_amount);
                           }}
-                          className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                          className="px-3 py-1 bg-tealCustom text-white rounded-md hover:bg-hovercol"
                         >
                           Chỉnh sửa
                         </button>
