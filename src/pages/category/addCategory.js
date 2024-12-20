@@ -9,7 +9,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 Modal.setAppElement('#root');
 
 const Category = () => {
-  const { userId, categories, setCategories } = useContext(AppContext);
+  const { userId, setCategories } = useContext(AppContext);
 
   // Tổng ngân sách cố định
   const totalBudget = 10000; // Ví dụ: 10,000 đơn vị tiền tệ

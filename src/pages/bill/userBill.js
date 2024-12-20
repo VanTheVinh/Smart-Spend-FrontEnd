@@ -12,6 +12,7 @@ const UserBill = () => {
   const [loading, setLoading] = useState(true);
 
   // Hàm gọi API để lấy thông tin ngân sách
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchUserInfo = async () => {
     try {
       const data = await getUserInfo(userId);
@@ -27,7 +28,8 @@ const UserBill = () => {
 
   useEffect(() => {
     fetchUserInfo(); // Gọi API khi component mount
-  }, [userId]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ userId]);
 
   // Hàm reload ngân sách khi có thay đổi
   const reloadBudget = () => {

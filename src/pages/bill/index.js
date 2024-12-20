@@ -13,7 +13,7 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filterType, setFilterType] = useState('ALL'); // Lọc theo ALL, THU, hoặc CHI
-  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' (tăng dần) hoặc 'desc' (giảm dần)
+  // const [sortOrder, setSortOrder] = useState('asc'); // 'asc' (tăng dần) hoặc 'desc' (giảm dần)
   const [amountSortOrder, setAmountSortOrder] = useState('default'); // default, asc, desc
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [billToEdit, setBillToEdit] = useState(null);
@@ -21,6 +21,7 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
   const [billToDelete, setBillToDelete] = useState(null);
   const [categoryNames, setCategoryNames] = useState({});
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchBillsData = async () => {
     try {
       let billData = [];
@@ -47,6 +48,7 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchCategoryNames = async () => {
     try {
       const userIds = [...new Set(bills.map((bill) => bill.user_id))];
@@ -77,18 +79,20 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
     } else {
       console.log('UserID chưa có');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, groupId]);
 
   useEffect(() => {
     if (bills.length > 0) {
       fetchCategoryNames();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bills, userId]);
 
-  const handleEdit = (bill) => {
+  function handleEdit(bill) {
     setBillToEdit(bill);
     setShowUpdateModal(true);
-  };
+  }
 
   const handleDelete = (bill) => {
     setBillToDelete(bill);
