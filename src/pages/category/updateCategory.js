@@ -4,7 +4,7 @@ import { AppContext } from '~/contexts/appContext';
 import { format, parse } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import axios from 'axios';
+// import axios from 'axios';
 import { getUserInfo } from '~/services/userService';
 
 // Cấu hình mặc định cho Modal
@@ -51,14 +51,15 @@ const UpdateCategory = ({
 
       fetchUserBudget();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category?.user_id]);
 
-  const formatCurrency = (amount) => {
-    if (typeof amount === 'string') {
-      amount = parseFloat(amount); // Nếu amount là chuỗi, chuyển đổi thành số
-    }
-    return amount.toLocaleString('vi-VN'); // Định dạng theo chuẩn Việt Nam
-  };
+  // const formatCurrency = (amount) => {
+  //   if (typeof amount === 'string') {
+  //     amount = parseFloat(amount); // Nếu amount là chuỗi, chuyển đổi thành số
+  //   }
+  //   return amount.toLocaleString('vi-VN'); // Định dạng theo chuẩn Việt Nam
+  // };
 
   const handleDateChange = (date) => {
     const isoDate = format(date, 'dd-MM-yyyy');

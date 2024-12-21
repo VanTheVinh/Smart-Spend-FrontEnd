@@ -13,7 +13,7 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filterType, setFilterType] = useState('ALL'); // Lọc theo ALL, THU, hoặc CHI
-  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' (tăng dần) hoặc 'desc' (giảm dần)
+  // const [sortOrder, setSortOrder] = useState('asc'); // 'asc' (tăng dần) hoặc 'desc' (giảm dần)
   const [amountSortOrder, setAmountSortOrder] = useState('default'); // default, asc, desc
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [billToEdit, setBillToEdit] = useState(null);
@@ -24,6 +24,7 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
 
   const userID = userId;
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchBillsData = async () => {
     try {
       let billData = [];
@@ -50,6 +51,7 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchCategoryNames = async () => {
     try {
       const userIds = [...new Set(bills.map((bill) => bill.user_id))];
@@ -77,22 +79,28 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
     if (userId) {
       fetchBillsData();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, groupId]);
 
   useEffect(() => {
     if (bills.length > 0) {
       fetchCategoryNames();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bills, userId]);
 
+<<<<<<< HEAD
   // const handleDropdownToggle = () => {
   //   setShowDropdown(!showDropdown);
   // };
 
   const handleEdit = (bill) => {
+=======
+  function handleEdit(bill) {
+>>>>>>> 17dec49533a64660396452feffe0239bbe9791b9
     setBillToEdit(bill);
     setShowUpdateModal(true);
-  };
+  }
 
   const handleDelete = (bill) => {
     setBillToDelete(bill);

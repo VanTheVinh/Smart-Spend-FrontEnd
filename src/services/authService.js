@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000'; // Địa chỉ API của Flask
+const API_URL = 'https://smart-spend-backend-production.up.railway.app'; // Địa chỉ API của Flask
 
 // Hàm đăng ký
 export const register = (username, password, fullname) => {
