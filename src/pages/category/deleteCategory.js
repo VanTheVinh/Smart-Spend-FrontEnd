@@ -21,13 +21,28 @@ const DeleteCategoryModal = ({ isOpen, onRequestClose, category, onDelete }) => 
   };
 
   return (
-    <div className="modal">
-      <div className="modal-content">
-        <h3>Are you sure you want to delete the category "{category.category_name}"?</h3>
-        <button onClick={handleDelete}>Yes</button>
-        <button onClick={onRequestClose}>Cancel</button>
-      </div>
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+  <div className="bg-white rounded-xl shadow-lg p-11 w-full max-w-sm">
+    <h3 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
+      Bạn chắc chắn xóa danh mục "
+      <span className="text-red-500">{category.category_name}</span>"?
+    </h3>
+    <div className="flex justify-between items-center gap-4">
+      <button
+        onClick={handleDelete}
+        className="bg-red-500 text-white px-4 py-2 rounded-lg w-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
+      >
+        OK
+      </button>
+      <button
+        onClick={onRequestClose}
+        className="bg-gray-300 text-gray-700 px-4 py-2 font-bold rounded-lg w-full hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
+      >
+        Hủy
+      </button>
     </div>
+  </div>
+</div>
   );
 
 };

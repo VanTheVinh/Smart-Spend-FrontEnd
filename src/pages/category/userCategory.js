@@ -1,18 +1,16 @@
-// UserBill.js
 import { useEffect, useState, useContext } from 'react';
-import BillList from '.';
+import CategoryList from '.';
 import { AppContext } from '~/contexts/appContext';
 import { getUserInfo } from '~/services/userService';
 import BudgetUpdate from '~/components/user/BudgetUpdate';
 
-const UserBill = () => {
+const UserCategory = () => {
   const { userId } = useContext(AppContext);
   const [budget, setBudget] = useState(null);
   const [actualBudget, setActualBuget] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Hàm gọi API để lấy thông tin ngân sách
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchUserInfo = async () => {
     try {
       const data = await getUserInfo(userId);
@@ -27,8 +25,7 @@ const UserBill = () => {
 
   useEffect(() => {
     fetchUserInfo(); // Gọi API khi component mount
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ userId]);
+  }, [userId]);
 
   // Hàm reload ngân sách khi có thay đổi
   const reloadBudget = () => {
@@ -62,10 +59,10 @@ const UserBill = () => {
         </div>
       </div>
 
-      {/* Truyền reloadBudget xuống BillList */}
-      <BillList userId={userId} onActionComplete={reloadBudget} />
+      {/* Truyền reloadBudget xuống CategoryList */}
+      <CategoryList userId={userId} onActionComplete={reloadBudget} />
     </div>
   );
 };
 
-export default UserBill;
+export default UserCategory;

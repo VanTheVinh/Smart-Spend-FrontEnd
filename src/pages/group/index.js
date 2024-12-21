@@ -1,6 +1,10 @@
 import React, { useContext, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createGroup, getGroup, getGroupMembers } from '~/services/groupService';
+import {
+  createGroup,
+  getGroup,
+  getGroupMembers,
+} from '~/services/groupService';
 import { AppContext } from '~/contexts/appContext';
 
 const Group = () => {
@@ -32,10 +36,12 @@ const Group = () => {
       if (groupMember.length > 0) {
         try {
           const groupPromises = groupMember.map((member) =>
-            getGroup({ group_id: member.group_id })
+            getGroup({ group_id: member.group_id }),
           );
           const groupResponses = await Promise.all(groupPromises);
-          const userGroups = groupResponses.map((response) => response.groups).flat();
+          const userGroups = groupResponses
+            .map((response) => response.groups)
+            .flat();
           setGroups(userGroups);
         } catch (error) {
           console.error('Lỗi khi lấy danh sách nhóm:', error);
@@ -75,71 +81,112 @@ const Group = () => {
   };
 
   return (
-    <div>
-      <h1>Quản lý Nhóm</h1>
+    <div className="flex flex-col justify-center mx-20">
+      <div className="p-10 bg-gray-100 min-h-screen">
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h3 className="text-3xl text-center font-bold mb-10">
+            DANH SÁCH QUỸ NHÓM
+          </h3>
 
-      <button onClick={() => setIsAddingGroup(true)}>Thêm Nhóm Mới</button>
+          <div className="flex justify-between mb-4">
+            <button
+              onClick={() => setIsAddingGroup(true)}
+              className="px-4 py-2 bg-tealCustom text-white rounded-xl hover:bg-teal-600"
+            >
+              <i className="fa-solid fa-plus"></i>
+            </button>
+          </div>
 
-      <h2>Danh sách nhóm</h2>
-      {groups.length > 0 ? (
-        <table border="1" style={{ width: '60%' }}>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Tên nhóm</th>
-              <th>Số tiền</th>
-              <th>Ngày tạo</th>
-              <th>Người tạo</th>
-              <th>Hành động</th>
-            </tr>
-          </thead>
-          <tbody>
-            {groups.map((group) => (
-              <tr key={group.id}>
-                <td>{group.id}</td>
-                <td>{group.group_name}</td>
-                <td>{group.amount}</td>
-                <td>{group.created_at}</td>
-                <td>{group.created_by}</td>
-                <td>
-                  <button onClick={() => handleGroupDetail(group.id)}>Chi tiết</button>
-                </td>
-              </tr>
-            ))}
+          {groups.length > 0 ? (
+            <div className="overflow-x-auto rounded-lg shadow-lg">
+              <table className="min-w-full border-collapse text-center bg-white shadow-md">
+                <thead>
+                  <tr className="text-black border-b-2 bg-tealFirsttd border-tealCustom">
+                    <th className="py-4 px-4">ID</th>
+                    <th className="py-4 px-4">Tên Nhóm</th>
+                    <th className="py-4 px-4">Số Tiền</th>
+                    <th className="py-4 px-4">Ngày Tạo</th>
+                    <th className="py-4 px-4">Người Tạo</th>
+                    <th className="py-4 px-4"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {groups.map((group, index) => (
+                    <tr
+                      key={group.id}
+                      className={index % 2 === 1 ? 'bg-tdOdd' : 'bg-white'}
+                    >
+                      <td className="py-4 px-4">{group.id}</td>
+                      <td className="py-4 px-4">{group.group_name}</td>
+                      <td className="py-4 px-4">{group.amount}</td>
+                      <td className="py-4 px-4">{group.created_at}</td>
+                      <td className="py-4 px-4">{group.created_by}</td>
+                      <td className="py-4 px-4">
+                        <button
+                          onClick={() => handleGroupDetail(group.id)}
+                          className="px-2 py-1 text-3xl text-tealCustom rounded-md"
+                        >
+                          <i class="fa-solid fa-circle-info"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="text-center text-lg text-gray-500">
+              Không có nhóm nào.
+            </p>
+          )}
 
-            {isAddingGroup && (
-              <tr>
-                <td>New</td>
-                <td>
-                  <input
-                    type="text"
-                    value={groupName}
-                    onChange={(e) => setGroupName(e.target.value)}
-                    placeholder="Nhập tên nhóm"
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="Nhập số tiền"
-                  />
-                </td>
-                <td></td>
-                <td>
-                  <button onClick={handleCreateGroup}>Thêm Nhóm</button>
-                  <button onClick={() => setIsAddingGroup(false)}>Đóng</button>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      ) : (
-        <p>Không có nhóm nào.</p>
-      )}
+          {message && (
+            <p className="text-center text-red-500 mt-4">{message}</p>
+          )}
 
-      {message && <p>{message}</p>}
+          {/* Modal for adding a new group */}
+          {isAddingGroup && (
+            <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
+              <div className="bg-white p-10 rounded-lg shadow-md max-w-sm w-full">
+                <h2 className="text-2xl text-center font-bold mb-4">
+                  Thêm nhóm mới
+                </h2>
+
+                <input
+                  type="text"
+                  value={groupName}
+                  onChange={(e) => setGroupName(e.target.value)}
+                  placeholder="Nhập tên nhóm"
+                  className="border rounded-md px-2 py-1 w-full mb-4"
+                />
+
+                <input
+                  type="number"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="Nhập số tiền"
+                  className="border rounded-md px-2 py-1 w-full mb-4"
+                />
+
+                <div className="flex justify-between">
+                  <button
+                    onClick={handleCreateGroup}
+                    className="px-4 py-2 font-bold bg-tealCustom text-white rounded-md hover:bg-teal-600"
+                  >
+                    Thêm nhóm
+                  </button>
+                  <button
+                    onClick={() => setIsAddingGroup(false)}
+                    className="px-4 py-2 font-bold bg-red-500 text-white rounded-md hover:bg-red-600"
+                  >
+                    Đóng
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

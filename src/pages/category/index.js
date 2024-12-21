@@ -1,15 +1,16 @@
-
+import { AppContext } from '~/contexts/appContext';
+import AddCategory from './addCategory';
 import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
-import { AppContext } from '~/contexts/appContext';
-import Category from './addCategory';
 import UpdateCategory from './updateCategory';
 import DeleteCategory from './deleteCategory';
 import { getCategoryByUserId } from '~/services/categoryService';
 import BudgetUpdate from '~/components/user/BudgetUpdate';
 import { getUserInfo } from '~/services/userService';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const CategoryList = () => {
   const { userId, categories, setCategories } = useContext(AppContext);
@@ -122,92 +123,85 @@ const CategoryList = () => {
   }
 
   return (
-    <div>
-      <h2>Category List</h2>
-      
+    <div className="p-10">
       <BudgetUpdate
         userId={userId}
         currentBudget={budget}
         onUpdateSuccess={(newBudget) => setBudget(newBudget)}
       />
-      <Category />
-      
-      {/* Dropdown lọc theo type */}
-      <div>
-        <label htmlFor="filterType">Filter by Type: </label>
-        <select
-          id="filterType"
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value)}
-        >
-          <option value="">All</option>
-          <option value="THU">THU</option>
-          <option value="CHI">CHI</option>
-        </select>
+      <h3 className="text-3xl font-bold mb-10 text-center mt-4">DANH SÁCH DANH MỤC</h3>
+
+      <div className="ml-20 flex items-start">
+        <AddCategory onCategoryAdded={fetchCategories} />
       </div>
 
-      {/* Disable khi chưa có ngân sách */}
-      {filteredCategories.length === 0 ? (
+      {categories.length === 0 ? (
         <p>No categories found.</p>
       ) : (
-        <table border="1" cellPadding="10" cellSpacing="0">
-          <thead>
-            <tr>
-              <th>Type</th>
-              <th>Name</th>
-              <th>Percentage Limit</th>
-              <th>Amount</th>
-              <th>Actual Amount</th>
-              <th>Time Frame</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredCategories.map((category) => (
-              <tr key={category.id}>
-                <td>
-                  {category.category_type === 'THU' ? (
-                    <FontAwesomeIcon icon={faChevronUp} />
-                  ) : category.category_type === 'CHI' ? (
-                    <FontAwesomeIcon icon={faChevronDown} />
-                  ) : (
-                    'N/A'
-                  )}
-                </td>
-                <td>{category.category_name}</td>
-                <td>{category.percentage_limit}</td>
-                <td>{formatCurrency(category.amount)}</td>
-                <td>{formatCurrency(category.actual_amount)}</td>
-                <td>{category.time_frame}</td>
-                <td>
-                  <button onClick={() => handleOpenUpdateModal(category)}>Edit</button>
-                  <button onClick={() => handleOpenDeleteModal(category)}>Delete</button>
-                </td>
+        <div className="overflow-x-auto p-11 m-9">
+          <table className="min-w-full border-collapse text-center bg-white shadow-md">
+            <thead>
+              <tr className="text-black border-b-2 bg-tealFirsttd border-tealCustom">
+                <th className="py-4 px-4">ID</th>
+                <th className="py-4 px-4">Type</th>
+                <th className="py-4 px-4">Name</th>
+                <th className="py-4 px-4">Percentage Limit</th>
+                <th className="py-4 px-4">Amount</th>
+                <th className="py-4 px-4">Actual Amount</th>
+                <th className="py-4 px-4">Time Frame</th>
+                <th className="py-4 px-4"></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {categories.map((category, index) => (
+                <tr
+                  key={category.id}
+                  className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}
+                >
+                  <td className="py-4 px-4">{category.id}</td>
+                  <td className="py-4 px-4">{category.category_type}</td>
+                  <td className="py-4 px-4">{category.category_name}</td>
+                  <td className="py-4 px-4">{category.percentage_limit}</td>
+                  <td className="py-4 px-4">
+                    {formatCurrency(category.amount)}
+                  </td>
+                  <td className="py-2 px-4">
+                    {formatCurrency(category.actual_amount)}
+                  </td>
+                  <td className="py-2 px-4">{category.time_frame}</td>
+                  <td className="py-2 px-4 relative">
+                    <button
+                      onClick={() => handleOpenUpdateModal(category)}
+                      className="mr-6 px-2 py-1 text-tealEdit rounded-md"
+                    >
+                      <i className="fa-solid fa-pen"></i>
+                    </button>
+                    <button
+                      onClick={() => handleOpenDeleteModal(category)}
+                      className="px-2 py-1 text-red-600 rounded-md"
+                    >
+                      <i className="fa-solid fa-trash-can"></i>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
-      {/* Modal UpdateCategory */}
-      {isModalOpen && (
-        <UpdateCategory
-          isOpen={isModalOpen}
-          onRequestClose={handleCloseModal}
-          category={selectedCategory}
-          onUpdateSuccess={handleUpdateCategorySuccess}
-          totalPercentageLimit={totalPercentageLimit}
-        />
-      )}
-      {/* Modal DeleteCategory */}
-      {isDeleteModalOpen && (
-        <DeleteCategory
-          isOpen={isDeleteModalOpen}
-          onRequestClose={handleCloseDeleteModal}
-          category={selectedCategory}
-          onDelete={handleDeleteCategory}
-        />
-      )}
+      <UpdateCategory
+        isOpen={isModalOpen}
+        onRequestClose={handleCloseModal}
+        category={selectedCategory}
+      />
+
+      <DeleteCategory
+        isOpen={isDeleteModalOpen}
+        onRequestClose={handleCloseDeleteModal}
+        category={selectedCategory}
+        onDelete={handleDeleteCategory}
+      />
     </div>
   );
 };

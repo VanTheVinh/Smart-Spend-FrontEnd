@@ -1,24 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { updateUser } from '~/services/userService';
 
 const BudgetUpdate = ({ userId, currentBudget, onUpdateSuccess }) => {
   const [newBudget, setNewBudget] = useState(currentBudget); // Trạng thái ngân sách mới
-  const [isEditing, setIsEditing] = useState(false); // Trạng thái cho phép chỉnh sửa ngân sách
+  const [isEditing, setIsEditing] = useState(false); // Trạng thái chỉnh sửa
 
-  // Đồng bộ newBudget với currentBudget khi chuyển sang chế độ chỉnh sửa
-  useEffect(() => {
-    if (isEditing) {
-      setNewBudget(currentBudget); // Cập nhật giá trị mới cho input
-    }
-  }, [isEditing, currentBudget]);
-
-  // Hàm cập nhật ngân sách mới
+  // Hàm xử lý cập nhật ngân sách
   const handleUpdateBudget = async () => {
     try {
       const response = await updateUser(userId, { budget: newBudget });
       if (response.status === 'success') {
         onUpdateSuccess(newBudget); // Gọi callback khi cập nhật thành công
-        setIsEditing(false); // Đặt lại trạng thái là không chỉnh sửa
+        setIsEditing(false); // Thoát chế độ chỉnh sửa
         alert('Ngân sách đã được cập nhật thành công');
       }
     } catch (error) {
@@ -32,28 +25,51 @@ const BudgetUpdate = ({ userId, currentBudget, onUpdateSuccess }) => {
   };
 
   return (
-    <div>
-      <h3>Ngân sách của bạn: {formatCurrency(currentBudget)}</h3>
-      
-      {/* Nếu đang chỉnh sửa, hiển thị ô input */}
-      {isEditing ? (
-        <div>
-          <label>
-            Cập nhật ngân sách:
-            <input 
-              type="number" 
-              value={newBudget} 
-              onChange={(e) => setNewBudget(e.target.value)} 
+    <div className="bg-white flex justify-center p-4 rounded-lg shadow-md mt-6 mb-3"
+    style={{ width: '500px' }}
+    >
+      <div className="flex items-center space-x-4">
+        <h3 className='font-bold'>
+          Ngân sách của bạn:{" "}
+          {isEditing ? (
+            <input
+              type="number"
+              value={newBudget}
+              onChange={(e) => setNewBudget(e.target.value)}
+              className="border border-gray-300 rounded px-4 py-2"
+              style={{ width: "150px" }} // Giữ kích thước cố định để tránh giao diện bị thay đổi
             />
-          </label>
-          <button onClick={handleUpdateBudget}>Cập nhật ngân sách</button>
-          <button onClick={() => setIsEditing(false)}>Hủy</button>
-        </div>
-      ) : (
-        <div>
-          <button onClick={() => setIsEditing(true)}>Chỉnh sửa ngân sách</button>
-        </div>
-      )}
+          ) : (
+            formatCurrency(currentBudget)
+          )}
+        </h3>
+        {isEditing ? (
+          <>
+            <button
+              className="bg-tealCustom hover:bg-teal-600 font-bold text-white px-4 py-2 rounded mr-2"
+              onClick={handleUpdateBudget}
+            >
+              Lưu
+            </button>
+            <button
+              className="bg-gray-500 font-bold text-white px-4 py-2 rounded"
+              onClick={() => {
+                setIsEditing(false); // Thoát chế độ chỉnh sửa
+                setNewBudget(currentBudget); // Khôi phục giá trị ban đầu
+              }}
+            >
+              Hủy
+            </button>
+          </>
+        ) : (
+          <button
+            className="text-tealCustom px-4 py-2 rounded"
+            onClick={() => setIsEditing(true)}
+          >
+            <i className="fa-solid fa-pen"></i>
+          </button>
+        )}
+      </div>
     </div>
   );
 };
