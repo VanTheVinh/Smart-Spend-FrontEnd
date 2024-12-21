@@ -20,6 +20,17 @@ export const bill = (
   });
 };
 
+export const addBill = async (data) => {
+  try {
+    const response = await axios.post(`${API_URL}/add-bill`, data);
+    return response.data; // Trả về phản hồi từ server
+  } catch (error) {
+    console.error('Lỗi khi thêm hóa đơn:', error);
+    throw error; // Ném lỗi để xử lý ở nơi khác
+  }
+};
+
+
 export const getBills = async (params) => {
   try {
     const response = await axios.get(`${API_URL}/get-bills`, { params });

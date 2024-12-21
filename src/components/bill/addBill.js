@@ -1,9 +1,11 @@
 import React, { useState, useContext } from 'react';
 import Modal from 'react-modal';
-import { AppContext } from '~/contexts/appContext';
 import { format, parse } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+
+import { AppContext } from '~/contexts/appContext';
+import { addBill } from '~/services/billService';
 
 Modal.setAppElement('#root');
 
@@ -56,16 +58,10 @@ const AddBillModal = ({ onBillAdded, groupId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Bill Data:', billData);
+    // console.log('Bill Data:', billData);
 
     try {
-      const response = await fetch(`http://127.0.0.1:5000/add-bill`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(billData),
-      });
+      const response = addBill(billData);
 
       if (response.ok) {
         const result = await response.json();
@@ -78,10 +74,7 @@ const AddBillModal = ({ onBillAdded, groupId }) => {
           category_name:
             categories.find((cat) => cat.id === billData.category_id)
               ?.category_name || 'Unknown',
-        });
-
-        console.log('Bill Data: ', billData);
-        
+        });        
 
         alert('Bill added successfully!');
         setBillData({
