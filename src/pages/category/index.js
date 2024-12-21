@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
-import Category from './addCategory';
 import UpdateCategory from './updateCategory';
 import DeleteCategory from './deleteCategory';
 import { getCategoryByUserId } from '~/services/categoryService';

@@ -10,6 +10,9 @@ import Group from '~/pages/group';
 import GroupDetail from '~/pages/group/groupDetail';
 import Home from '~/pages/home';
 import Profile from '~/pages/profile';
+import Sidebar from '~/components/sidebar';
+import DashboardLayout from '~/components/dashboard';
+import BudgetUpdate from '~/components/user/BudgetUpdate';
 
 const AppRouter = () => {
   return (
@@ -17,7 +20,7 @@ const AppRouter = () => {
       <Route path="/" element={<Navigate to="/login" />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route element={<Dashboard />}>
+      <Route element={<DashboardLayout />}>
         <Route path="/home" element={<Home />} />
         <Route path="/user-bill" element={<UserBill />} />
         <Route path="/group-bill" element={<GroupBill />} />

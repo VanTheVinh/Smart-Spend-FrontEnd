@@ -1,11 +1,10 @@
-// UserBill.js
 import { useEffect, useState, useContext } from 'react';
-import BillList from '.';
+import CategoryList from '.';
 import { AppContext } from '~/contexts/appContext';
 import { getUserInfo } from '~/services/userService';
 import BudgetUpdate from '~/components/user/BudgetUpdate';
 
-const UserBill = () => {
+const UserCategory = () => {
   const { userId } = useContext(AppContext);
   const [budget, setBudget] = useState(null);
   const [actualBudget, setActualBuget] = useState(null);
@@ -60,10 +59,10 @@ const UserBill = () => {
         </div>
       </div>
 
-      {/* Truyền reloadBudget xuống BillList */}
-      <BillList userId={userId} onActionComplete={reloadBudget} />
+      {/* Truyền reloadBudget xuống CategoryList */}
+      <CategoryList userId={userId} onActionComplete={reloadBudget} />
     </div>
   );
 };
 
-export default UserBill;
+export default UserCategory;

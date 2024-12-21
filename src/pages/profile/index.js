@@ -129,79 +129,94 @@ const Profile = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="user-info">
-        <img
-          src={userInfo.avatar}
-          alt="Avatar"
-          className="user-avatar"
-          style={{
-            width: '50px',
-            height: '50px',
-            borderRadius: '50%',
-            objectFit: 'cover', // Đảm bảo ảnh không bị kéo dài và giữ đúng tỷ lệ
-          }}
-        />
-        <p>{userInfo.fullname}</p>
-        <input
-          type="file"
-          id="avatar-upload"
-          onChange={handleAvatarUpload}
-          disabled={isLoading} // Vô hiệu hóa khi đang upload
-          accept="image/*" // Chỉ cho phép chọn file ảnh
-        />
-        {isLoading && <p>Đang tải ảnh...</p>}{' '}
-        {/* Hiển thị thông báo khi đang tải */}
-        {error && <p style={{ color: 'red' }}>{error}</p>}{' '}
-        {/* Hiển thị thông báo lỗi nếu có */}
-      </div>
-      <div>
-        <label>Tên đăng nhập</label>
-        <input
-          type="text"
-          name="username"
-          value={userData.username}
-          onChange={handleInputChange}
-          disabled // Không cho phép thay đổi tên đăng nhập
-        />
-      </div>
-      <div>
-        <label>Họ và tên</label>
-        <input
-          type="text"
-          name="fullname"
-          value={userData.fullname}
-          onChange={handleInputChange}
-        />
-      </div>
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 overflow-x-hidden">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-md bg-white rounded-lg shadow-md p-11"
+      >
+        <div className="flex flex-col items-center">
+          <img
+            src={userInfo.avatar}
+            alt="Avatar"
+            className="w-32 h-32 rounded-full object-cover mb-4"
+          />
+          <input
+            type="file"
+            id="avatar-upload"
+            onChange={handleAvatarUpload}
+            disabled={isLoading}
+            accept="image/*"
+            className="text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+          />
+          {isLoading && <p className="text-blue-500">Uploading...</p>}
+          {error && <p className="text-red-500">{error}</p>}
+        </div>
 
-      <div>
-        <label>Mật khẩu mới</label>
-        <input
-          type="password"
-          name="password"
-          value={userData.password}
-          onChange={handleInputChange}
-        />
-      </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-xl font-bold mb-2">
+            Tên người dùng
+          </label>
+          <input
+            type="text"
+            name="username"
+            value={userData.username}
+            onChange={handleInputChange}
+            disabled
+            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300 bg-gray-100"
+          />
+        </div>
 
-      <div>
-        <label>Xác nhận mật khẩu</label>
-        <input
-          type="password"
-          name="confirmPassword"
-          value={userData.confirmPassword}
-          onChange={handleInputChange}
-        />
-      </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-xl font-bold mb-2">
+            Họ và tên
+          </label>
+          <input
+            type="text"
+            name="fullname"
+            value={userData.fullname}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-tealCustom"
+          />
+        </div>
 
-      <button type="submit" disabled={isLoading}>
-        Cập nhật thông tin
-      </button>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-xl font-bold mb-2">
+            Mật khẩu mới
+          </label>
+          <input
+            type="password"
+            name="password"
+            value={userData.password}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-tealCustom"
+          />
+        </div>
 
-      {isLoading && <p>Đang cập nhật...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-    </form>
+        <div className="mb-6">
+          <label className="block text-gray-700 text-xl font-bold mb-2">
+            Xác nhận mật khẩu
+          </label>
+          <input
+            type="password"
+            name="confirmPassword"
+            value={userData.confirmPassword}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-tealCustom"
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full bg-tealCustom text-white py-2 px-2 rounded-lg hover:bg-tealEdit transition duration-200"
+        >
+          Cập nhật thông tin
+        </button>
+
+        {isLoading && <p className="text-blue-500">Cập nhật...</p>}
+        {error && <p className="text-red-500">{error}</p>}
+      </form>
+    </div>
   );
 };
 

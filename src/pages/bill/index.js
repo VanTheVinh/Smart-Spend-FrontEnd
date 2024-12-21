@@ -142,95 +142,131 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
   }
 
   return (
-    <div className='flex flex-col justify-center'>
-    <div className="p-10 bg-gray-100 min-h-screen">
-      {/* Khối lớn chứa tiêu đề, nút và danh sách hóa đơn */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        {/* Tiêu đề */}
-        <h3 className="text-3xl text-center font-bold mb-6">DANH SÁCH HÓA ĐƠN</h3>
-  
-        {/* Nút thêm hóa đơn */}
-        <div className="flex justify-start mb-6">
-          <AddBillModal onBillAdded={fetchBillsData} groupId={groupId} />
-        </div>
-  
-        {/* Danh sách hóa đơn */}
-        {bills.length === 0 ? (
-          <p className="text-center text-gray-600">No bills found.</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full border-collapse text-center bg-white shadow-md">
-              <thead>
-                <tr className="text-black border-b-2 bg-tealFirsttd border-tealCustom">
-                  <th className="py-4 px-4">ID</th>
-                  <th className="py-4 px-4">Type</th>
-                  <th className="py-4 px-4">Amount</th>
-                  <th className="py-4 px-4">Date</th>
-                  <th className="py-4 px-4">Category</th>
-                  <th className="py-4 px-4">Description</th>
-                  <th className="py-4 px-4">Created By</th>
-                  <th className="py-4 px-4">Group ID</th>
-                  <th className="py-4 px-4"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {bills.map((bill, index) => (
-                  <tr
-                    key={bill.id}
-                    className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}
-                  >
-                    <td className="py-4 px-4">{bill.id}</td>
-                    <td className="py-4 px-4">{bill.type}</td>
-                    <td className="py-4 px-4">{bill.amount}</td>
-                    <td className="py-4 px-4">{bill.date}</td>
-                    <td className="py-4 px-4">
-                      {categoryNames[bill.category_id] || 'Loading...'}
-                    </td>
-                    <td className="py-4 px-4">{bill.description}</td>
-                    <td className="py-4 px-4">{bill.user_id}</td>
-                    <td className="py-4 px-4">{bill.group_id}</td>
-                    <td className="py-4 px-4 relative">
-                      <button
-                        onClick={() => handleEdit(bill)}
-                        className="mr-6 px-2 py-1 text-tealEdit rounded-md"
-                      >
-                        <i className="fa-solid fa-pen"></i> {/* Pencil icon */}
-                      </button>
-                      <button
-                        onClick={() => handleDelete(bill)}
-                        className="px-2 py-1 text-red-600 rounded-md"
-                      >
-                        <i className="fa-solid fa-trash-can"></i>{' '}
-                        {/* Trash can icon */}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+    <div className="flex flex-col justify-center mx-20">
+      <div className="p-10 bg-gray-100 min-h-screen">
+        {/* Khối lớn chứa tiêu đề, nút và danh sách hóa đơn */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          {/* Tiêu đề */}
+          <h3 className="text-3xl text-center font-bold mt-3">DANH SÁCH HÓA ĐƠN</h3>
+
+          <div className="flex justify-between mb-4">
+            {/* Nút thêm hóa đơn */}
+            <div className="flex justify-start mb-6">
+              <AddBillModal onBillAdded={fetchBillsData} groupId={groupId} />
+            </div>
+            {/* Bộ lọc */}
+            <div className="my-4 space-x-4 text-gray-600">
+              <i class="fa-solid fa-filter"></i>
+              <select 
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+              >
+                <option value="ALL">Tất cả</option>
+                <option value="THU">Thu nhập</option>
+                <option value="CHI">Chi tiêu</option>
+              </select>
+
+              {/* Lọc theo số tiền */}
+              <i class="fa-solid fa-filter-circle-dollar"></i>
+              <select
+                value={amountSortOrder}
+                onChange={(e) => toggleAmountSortOrder(e.target.value)}
+              >
+                <option value="default">Mặc định</option>
+                <option value="asc">Tăng dần</option>
+                <option value="desc">Giảm dần</option>
+              </select>
+            </div>
           </div>
-        )}
+
+          {/* Danh sách hóa đơn */}
+          {filteredBills.length === 0 ? (
+            <p className="text-center text-gray-600">No bills found.</p>
+          ) : (
+            <div className="overflow-x-auto rounded-lg shadow-lg">
+              <table className="min-w-full border-collapse text-center bg-white shadow-md">
+                <thead>
+                  <tr className="text-black border-b-2 bg-tealFirsttd border-tealCustom">
+                    <th className="py-4 px-4">Type</th>
+                    <th className="py-4 px-4">Amount</th>
+                    <th className="py-4 px-4">Date</th>
+                    <th className="py-4 px-4">Category</th>
+                    <th className="py-4 px-4">Description</th>
+                    <th className="py-4 px-4">Created By</th>
+                    <th className="py-4 px-4"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredBills.map((bill, index) => (
+                    <tr
+                      key={bill.id}
+                      className={index % 2 === 1 ? 'bg-tdOdd' : 'bg-white'}
+                    >
+                      <td>
+                        {bill.type === 'THU' ? (
+                          <FontAwesomeIcon
+                            icon={faChevronUp}
+                            className="text-teal-700"
+                          />
+                        ) : bill.type === 'CHI' ? (
+                          <FontAwesomeIcon
+                            icon={faChevronDown}
+                            className="text-red-600"
+                          />
+                        ) : (
+                          'N/A'
+                        )}
+                      </td>
+                      <td className="py-4 px-4">{bill.amount}</td>
+                      <td className="py-4 px-4">{bill.date}</td>
+                      <td className="py-4 px-4">
+                        {categoryNames[bill.category_id] || 'Loading...'}
+                      </td>
+                      <td className="py-4 px-4">{bill.description}</td>
+                      <td className="py-4 px-4">{bill.user_id}</td>
+                      <td className="py-4 px-4 relative">
+                        <button
+                          onClick={() => handleEdit(bill)}
+                          className="mr-6 px-2 py-1 text-tealEdit rounded-md"
+                        >
+                          <i className="fa-solid fa-pen"></i>{' '}
+                          {/* Pencil icon */}
+                        </button>
+                        <button
+                          onClick={() => handleDelete(bill)}
+                          className="px-2 py-1 text-red-600 rounded-md"
+                        >
+                          <i className="fa-solid fa-trash-can"></i>{' '}
+                          {/* Trash can icon */}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        {/* Modals */}
+        <UpdateBillModal
+          isOpen={showUpdateModal}
+          onRequestClose={() => setShowUpdateModal(false)}
+          billToEdit={billToEdit}
+          onBillUpdated={() => {
+            fetchBillsData();
+            setShowUpdateModal(false);
+            handleBillUpdated();
+          }}
+        />
+
+        <DeleteBillModal
+          isOpen={showDeleteModal}
+          onRequestClose={() => setShowDeleteModal(false)}
+          billToDelete={billToDelete}
+          onBillDeleted={handleBillDeleted}
+        />
       </div>
-  
-      {/* Modals */}
-      <UpdateBillModal
-        isOpen={showUpdateModal}
-        onRequestClose={() => setShowUpdateModal(false)}
-        billToEdit={billToEdit}
-        onBillUpdated={() => {
-          fetchBillsData();
-          setShowUpdateModal(false);
-          handleBillUpdated();
-        }}
-      />
-  
-      <DeleteBillModal
-        isOpen={showDeleteModal}
-        onRequestClose={() => setShowDeleteModal(false)}
-        billToDelete={billToDelete}
-        onBillDeleted={handleBillDeleted}
-      />
-    </div>
     </div>
   );
 };

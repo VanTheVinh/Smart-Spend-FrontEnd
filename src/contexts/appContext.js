@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect , useContext} from 'react';
 
 // Tạo context
 export const AppContext = createContext();
@@ -62,8 +62,38 @@ export const AppProvider = ({ children }) => {
   }, [userId]); // Chỉ chạy 1 lần khi component được mount
 
   return (
-    <AppContext.Provider value={{ userId, setUserId, userBudget, setBudget, categoryId, setCategoryId, categories, setCategories }}>
+    <AppContext.Provider value={{ 
+      userId, 
+      setUserId, 
+      userBudget, 
+      setBudget, 
+      categoryId, 
+      setCategoryId, 
+      categories, 
+      setCategories
+       }}>
       {children}
     </AppContext.Provider>
   );
 };
+
+// Tạo LanguageContext cho việc quản lý ngôn ngữ
+export const LanguageContext = createContext();
+
+// Tạo provider cho LanguageContext
+export const LanguageProvider = ({ children }) => {
+  const [language, setLanguage] = useState('vi'); // Mặc định là Tiếng Việt
+
+  // Hàm để chuyển đổi ngôn ngữ
+  const toggleLanguage = () => {
+    setLanguage((prevLang) => (prevLang === 'vi' ? 'en' : 'vi'));
+  };
+
+  return (
+    <LanguageContext.Provider value={{ language, toggleLanguage }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+};
+// Custom hook để sử dụng ngữ cảnh ngôn ngữ
+export const useLanguage = () => useContext(LanguageContext);
