@@ -1,6 +1,6 @@
 // groupService.js
 import axios from 'axios';
-const API_URL = 'http://localhost:5000'; // Địa chỉ API của bạn
+const API_URL = 'https://smart-spend-backend-production.up.railway.app'; // Địa chỉ API của bạn
 
 export const createGroup = async (data) => {
   try {

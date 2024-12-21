@@ -1,5 +1,5 @@
 import axios from 'axios';
-const API_URL = 'http://localhost:5000'; // Địa chỉ API của bạn
+const API_URL = 'https://smart-spend-backend-production.up.railway.app'; // Địa chỉ API của bạn
 
 export const getUserInfo = async (userId) => {
     try {        
@@ -29,7 +29,7 @@ export const updateUser = async (userId, data) => {
 export const uploadAvatar = async (formData, userId) => {
   try {
     const response = await axios.post(
-      `http://localhost:5000/upload-avatar/${userId}`, // URL backend mới
+      `${API_URL}/upload-avatar/${userId}`, // URL backend mới
       formData,
       {
         headers: {
