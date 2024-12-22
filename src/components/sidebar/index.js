@@ -105,7 +105,7 @@ const Sidebar = () => {
               <div className="ml-5">Hóa đơn</div>
             </button>
             <button
-              onClick={() => navigate('/category')}
+              onClick={() => navigate('/user-category')}
               className={`flex items-center px-6 py-3 rounded-lg ${
                 isActive('/category')
                   ? 'bg-teal-600 text-white'

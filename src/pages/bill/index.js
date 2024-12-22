@@ -4,6 +4,7 @@ import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import AddBillModal from '../../components/bill/addBill';
 import UpdateBillModal from '../../components/bill/updateBill';
 import DeleteBillModal from '../../components/bill/deteleBill';
+import BudgetUpdate from '~/components/user/BudgetUpdate';
 import { getBills } from '~/services/billService';
 import { getCategoryByUserId } from '~/services/categoryService';
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -21,6 +22,8 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
   const [billToDelete, setBillToDelete] = useState(null);
   const [categoryNames, setCategoryNames] = useState({});
   const [showDropdown, setShowDropdown] = useState(false);
+  const [budget, setBudget] = useState(null);
+  
 
   const userID = userId;
 
@@ -89,15 +92,11 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bills, userId]);
 
-<<<<<<< HEAD
   // const handleDropdownToggle = () => {
   //   setShowDropdown(!showDropdown);
   // };
 
   const handleEdit = (bill) => {
-=======
-  function handleEdit(bill) {
->>>>>>> 17dec49533a64660396452feffe0239bbe9791b9
     setBillToEdit(bill);
     setShowUpdateModal(true);
   }
@@ -151,14 +150,11 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
 
   return (
     <div className="flex flex-col justify-center mx-20">
-      <div className="p-10 bg-gray-100 min-h-screen">
-        {/* Khối lớn chứa tiêu đề, nút và danh sách hóa đơn */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          {/* Tiêu đề */}
+      <div className="p-10 min-h-screen">
+        <div className="bg-white p-6 rounded-xl shadow-lg">
           <h3 className="text-3xl text-center font-bold mt-3">DANH SÁCH HÓA ĐƠN</h3>
 
           <div className="flex justify-between mb-4">
-            {/* Nút thêm hóa đơn */}
             <div className="flex justify-start mb-6">
               <AddBillModal onBillAdded={fetchBillsData} groupId={groupId} />
             </div>
@@ -191,7 +187,7 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
           {filteredBills.length === 0 ? (
             <p className="text-center text-gray-600">No bills found.</p>
           ) : (
-            <div className="overflow-x-auto rounded-lg shadow-lg">
+            <div className="overflow-x-auto rounded-xl shadow-lg">
               <table className="min-w-full border-collapse text-center bg-white shadow-md">
                 <thead>
                   <tr className="text-black border-b-2 bg-tealFirsttd border-tealCustom">
@@ -235,14 +231,14 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
                       <td className="py-4 px-4 relative">
                         <button
                           onClick={() => handleEdit(bill)}
-                          className="mr-6 px-2 py-1 text-tealEdit rounded-md"
+                          className="mr-6 px-2 py-1 text-tealEdit"
                         >
                           <i className="fa-solid fa-pen"></i>{' '}
                           {/* Pencil icon */}
                         </button>
                         <button
                           onClick={() => handleDelete(bill)}
-                          className="px-2 py-1 text-red-600 rounded-md"
+                          className="px-2 py-1 text-red-600"
                         >
                           <i className="fa-solid fa-trash-can"></i>{' '}
                           {/* Trash can icon */}

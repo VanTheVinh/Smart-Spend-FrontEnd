@@ -14,6 +14,7 @@ module.exports = {
         tealBGDaskboard: '#F5F5F5',
         hovercolor: '#9AE6B4',
         tdOdd: '#E0EEEE',
+        openForm: '#ADDDD0',
       },
     },
   },

@@ -13,6 +13,7 @@ import Profile from '~/pages/profile';
 import Sidebar from '~/components/sidebar';
 import DashboardLayout from '~/components/dashboard';
 import BudgetUpdate from '~/components/user/BudgetUpdate';
+import UserCategory from '~/pages/category/userCategory';
 
 const AppRouter = () => {
   return (
@@ -24,7 +25,7 @@ const AppRouter = () => {
         <Route path="/home" element={<Home />} />
         <Route path="/user-bill" element={<UserBill />} />
         <Route path="/group-bill" element={<GroupBill />} />
-        <Route path="/category" element={<CategoryList />} />
+        <Route path="/user-category" element={<UserCategory />} />
         <Route path="/group" element={<Group />} />
         <Route path="/group-detail/:groupId" element={<GroupDetail />} />
         <Route path="/profile" element={<Profile />} />

@@ -1,9 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { updateUser } from '~/services/userService';
+import { getUserInfo } from '~/services/userService';
 
 const BudgetUpdate = ({ userId, currentBudget, onUpdateSuccess }) => {
   const [newBudget, setNewBudget] = useState(currentBudget); // Trạng thái ngân sách mới
   const [isEditing, setIsEditing] = useState(false); // Trạng thái chỉnh sửa
+  const [actualBudget, setActualBuget] = useState(null);
+  //const { userId } = useContext(AppContext);
+  const [budget, setBudget] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchUserInfo = async () => {
+    try {
+      const data = await getUserInfo(userId);
+      setBudget(data.budget);
+      setActualBuget(data.actual_budget);
+    } catch (error) {
+      console.error('Lỗi khi lấy thông tin người dùng:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserInfo(); // Gọi API khi component mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ userId]);
+
 
   // Hàm xử lý cập nhật ngân sách
   const handleUpdateBudget = async () => {
@@ -25,7 +48,8 @@ const BudgetUpdate = ({ userId, currentBudget, onUpdateSuccess }) => {
   };
 
   return (
-    <div className="bg-white flex justify-center p-4 rounded-lg shadow-md mt-6 mb-3"
+    <div className='flex space-x-12 mx-28 mt-4'>
+    <div className="bg-white flex justify-center p-4 rounded-xl shadow-md mt-6 mb-3"
     style={{ width: '500px' }}
     >
       <div className="flex items-center space-x-4">
@@ -46,7 +70,7 @@ const BudgetUpdate = ({ userId, currentBudget, onUpdateSuccess }) => {
         {isEditing ? (
           <>
             <button
-              className="bg-tealCustom hover:bg-teal-600 font-bold text-white px-4 py-2 rounded mr-2"
+              className="bg-tealCustom hover:bg-teal-600 font-bold text-white px-4 py-2 rounded"
               onClick={handleUpdateBudget}
             >
               Lưu
@@ -63,14 +87,23 @@ const BudgetUpdate = ({ userId, currentBudget, onUpdateSuccess }) => {
           </>
         ) : (
           <button
-            className="text-tealCustom px-4 py-2 rounded"
+            className="text-tealCustom py-2 rounded"
             onClick={() => setIsEditing(true)}
           >
             <i className="fa-solid fa-pen"></i>
           </button>
         )}
       </div>
-    </div>
+      </div>
+      <div
+          className={`flex justify-center items-center p-4 rounded-xl shadow-md mt-6 mb-3 ${
+            actualBudget < 0 ? 'bg-red-300' : 'bg-green-300'
+          }`}
+          style={{ width: '480px' }}
+        >
+          <h3 className='font-bold'>Ngân sách hiện tại: {formatCurrency(actualBudget)}</h3>
+      </div>
+      </div>
   );
 };
 

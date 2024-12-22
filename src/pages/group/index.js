@@ -83,7 +83,7 @@ const Group = () => {
   return (
     <div className="flex flex-col justify-center mx-20">
       <div className="p-10 bg-gray-100 min-h-screen">
-        <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="bg-white p-6 rounded-xl shadow-md">
           <h3 className="text-3xl text-center font-bold mb-10">
             DANH SÁCH QUỸ NHÓM
           </h3>
@@ -98,7 +98,7 @@ const Group = () => {
           </div>
 
           {groups.length > 0 ? (
-            <div className="overflow-x-auto rounded-lg shadow-lg">
+            <div className="overflow-x-auto rounded-xl shadow-lg">
               <table className="min-w-full border-collapse text-center bg-white shadow-md">
                 <thead>
                   <tr className="text-black border-b-2 bg-tealFirsttd border-tealCustom">
