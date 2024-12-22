@@ -9,7 +9,8 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation(); // Lấy đường dẫn hiện tại
   const { userId } = useContext(AppContext);
-  const [avatar, setAvatar] = useState(''); // State để lưu avatar người dùng
+  const [avatar, setAvatar] = useState(''); 
+  const [fullName, setFullName] = useState(''); 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
@@ -20,6 +21,7 @@ const Sidebar = () => {
           userInfo.avatar ||
             'https://raw.githubusercontent.com/VanTheVinh/avatars-storage-spend-web/main/default_avatar.jpg',
         );
+        setFullName(userInfo.fullname);
       } catch (error) {
         console.error('Lỗi khi lấy avatar:', error);
       }
@@ -34,7 +36,7 @@ const Sidebar = () => {
     try {
       await logout();
       localStorage.removeItem('user_id');
-      localStorage.removeItem('budget');
+      // localStorage.removeItem('budget');
       navigate('/login');
     } catch (error) {
       console.error('Đăng xuất thất bại', error);
@@ -77,7 +79,7 @@ const Sidebar = () => {
               />
             </div>
             <h2 className="mt-4 text-lg font-semibold">
-              {userId || 'Người dùng'}
+              {fullName || 'Người dùng'}
             </h2>
             <hr className="w-full border-t-2 border-tealEdit mt-6" />
           </div>

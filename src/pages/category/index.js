@@ -1,9 +1,9 @@
 import { AppContext } from '~/contexts/appContext';
 import AddCategory from './addCategory';
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+// import { useNavigate } from 'react-router-dom';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
 import UpdateCategory from './updateCategory';
 import DeleteCategory from './deleteCategory';

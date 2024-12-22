@@ -6,6 +6,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 // import axios from 'axios';
 import { getUserInfo } from '~/services/userService';
+import { updateCategory } from '~/services/categoryService';
 
 // Cấu hình mặc định cho Modal
 Modal.setAppElement('#root');
@@ -127,16 +128,7 @@ const UpdateCategory = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(
-        `http://127.0.0.1:5000/update-category/${category.id}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(categoryData),
-        },
-      );
+      const response = await updateCategory(category.id, categoryData);
 
       console.log('Response:', response);
 

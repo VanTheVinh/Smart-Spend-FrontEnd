@@ -1,9 +1,11 @@
 import React, { useState, useContext } from 'react';
 import Modal from 'react-modal';
-import { AppContext } from '~/contexts/appContext';
 import { format, parse } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+
+import { AppContext } from '~/contexts/appContext';
+import { addCategory } from '~/services/categoryService';
 
 // Cấu hình mặc định cho Modal
 Modal.setAppElement('#root');
@@ -76,13 +78,7 @@ const Category = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://127.0.0.1:5000/add-category', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(categoryData),
-      });
+      const response = await addCategory(categoryData);
 
       if (response.ok) {
         const result = await response.json();

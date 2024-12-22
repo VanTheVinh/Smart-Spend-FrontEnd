@@ -25,6 +25,7 @@ const UserCategory = () => {
 
   useEffect(() => {
     fetchUserInfo(); // Gọi API khi component mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   // Hàm reload ngân sách khi có thay đổi

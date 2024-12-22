@@ -8,8 +8,8 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [fullname, setFullname] = useState('');
   const [message, setMessage] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  // const [showPassword, setShowPassword] = useState(false);
+  // const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
   const validateInputs = () => {

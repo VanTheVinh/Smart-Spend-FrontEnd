@@ -1,14 +1,13 @@
 import React from 'react';
+import { deleteCategory } from '~/services/categoryService';
 
 const DeleteCategoryModal = ({ isOpen, onRequestClose, category, onDelete }) => {
   if (!isOpen) return null;
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/delete-category/${category.id}`, {
-        method: 'DELETE',
-      });
-      const data = await response.json(); // If the response is JSON, log it
+      const response = await deleteCategory(category.id); 
+      const data = await response.json(); 
       console.log('API response:', data);
       if (!response.ok) {
         throw new Error(`Error deleting category. Status: ${response.status}`);

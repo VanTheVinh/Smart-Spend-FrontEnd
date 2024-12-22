@@ -20,7 +20,7 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [billToDelete, setBillToDelete] = useState(null);
   const [categoryNames, setCategoryNames] = useState({});
-  const [showDropdown, setShowDropdown] = useState(false);
+  // const [showDropdown, setShowDropdown] = useState(false);
 
   const userID = userId;
 
@@ -89,15 +89,7 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bills, userId]);
 
-<<<<<<< HEAD
-  // const handleDropdownToggle = () => {
-  //   setShowDropdown(!showDropdown);
-  // };
-
-  const handleEdit = (bill) => {
-=======
   function handleEdit(bill) {
->>>>>>> 17dec49533a64660396452feffe0239bbe9791b9
     setBillToEdit(bill);
     setShowUpdateModal(true);
   }
@@ -107,10 +99,10 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
     setShowDeleteModal(true);
   };
 
-  const handleBillAdded = () => {
-    fetchBillsData();
-    onActionComplete();
-  };
+  // const handleBillAdded = () => {
+  //   fetchBillsData();
+  //   onActionComplete();
+  // };
 
   const handleBillUpdated = () => {
     fetchBillsData();

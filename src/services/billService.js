@@ -41,6 +41,26 @@ export const getBills = async (params) => {
   }
 };
 
+export const updateBill = async (billId, data) => {
+  try {
+      const response = await axios.put(`${API_URL}/update-group/${billId}`, data);
+      return response.data; // Trả về phản hồi từ server
+  } catch (error) {
+      console.error("Lỗi khi cập nhật nhóm:", error);
+      throw error; // Ném lỗi để xử lý ở nơi khác
+  }
+};
+
+export const deleteBill = async (billId) => {
+  try {
+    const response = await axios.delete(`${API_URL}/delete-bill/${billId}`);
+    return response.data; // Trả về danh sách hóa đơn
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách hóa đơn:', error);
+    throw error; // Ném lỗi để xử lý ở nơi khác
+  }
+};
+
 // Hàm lọc hóa đơn
 export const filterBills = async (params) => {
   try {

@@ -1,31 +1,54 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Modal from 'react-modal';
-import { AppContext } from '~/contexts/appContext';
 import { format, parse } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
+import { AppContext } from '~/contexts/appContext';
+import { updateBill } from '~/services/billService';
+import { getCategoryByUserId } from '~/services/categoryService';
+
 Modal.setAppElement('#root');
 
-const UpdateBillModal = ({ isOpen, onRequestClose, billToEdit, onBillUpdated }) => {
-  const {userId, categories } = useContext(AppContext);
+const UpdateBillModal = ({
+  isOpen,
+  onRequestClose,
+  billToEdit,
+  onBillUpdated,
+}) => {
+  const { userId } = useContext(AppContext);
   const [billData, setBillData] = useState({
-    id: '',
+    // id: '',
     type: '',
-    amount: '',
+    amount: 0,
     date: '',
     category_id: '',
-    userId:'',
+    // userId: userId || 0,
     description: '',
   });
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    if (billToEdit) {
-      setBillData({
-        ...billToEdit,
-        userId: userId || billToEdit.userId, // Ensure userId is set
-      });
-    }
+    const fetchCategoriesAndSetBillData = async () => {
+      try {
+        if (billToEdit) {
+          const categories = await getCategoryByUserId(userId);
+          setCategories(categories);
+          console.log('Fetched categories:', categories);
+
+          // Nếu cần cập nhật categories vào state
+          setBillData({
+            ...billToEdit,
+            // Cập nhật userId nếu cần
+            // userId: userId || billToEdit.userId,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategoriesAndSetBillData();
   }, [billToEdit, userId]);
 
   const handleDateChange = (date) => {
@@ -42,32 +65,30 @@ const UpdateBillModal = ({ isOpen, onRequestClose, billToEdit, onBillUpdated }) 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const updatedBillData = {
-      ...billData,
-      userId: userId || billData.userId,
-    };
+    console.log("Update bill data nè", billData);
+
+    // delete billData.id;
+
+    // const updatedBillData = {
+    //   ...billData,
+    //   amount: Number(billData.amount),
+    // };
+
+
+    console.log(' bill data nè:', billData);
+    // console.log(' bill id:', billToEdit.id);
 
     try {
-      const response = await fetch(`http://127.0.0.1:5000/update-bill/${billToEdit.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },  
-        body: JSON.stringify(updatedBillData),
-      });
+      const updatedBill = await updateBill(billToEdit.id, billData);
 
-      if (response.ok) {
-        const updatedBill = await response.json();
-        onBillUpdated(updatedBill);
-        alert('Bill updated successfully!');
+      // console.log('Updated bill nè:', updatedBill);
 
-        onRequestClose();
-      } else {
-        const errorData = await response.json();
-        alert(`Error: ${errorData.message || response.statusText}`);
-      }
+      onBillUpdated(updatedBill);
+      alert('Bill updated successfully!');
+
+      onRequestClose();
     } catch (error) {
-      console.error('Error during fetch:', error);
+      // console.error('Error during fetch:', error);
       alert(`Network error: ${error.message}`);
     }
   };
@@ -79,11 +100,15 @@ const UpdateBillModal = ({ isOpen, onRequestClose, billToEdit, onBillUpdated }) 
       className="modal max-w-lg w-full p-6 bg-white rounded-xl shadow-xl"
       overlayClassName="overlay fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center"
     >
-      <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Cập nhật hóa đơn</h2>
+      <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+        Cập nhật hóa đơn
+      </h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Bill Type */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Loại hóa đơn:</label>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Loại hóa đơn:
+          </label>
           <select
             name="type"
             value={billData.type}
@@ -98,7 +123,9 @@ const UpdateBillModal = ({ isOpen, onRequestClose, billToEdit, onBillUpdated }) 
 
         {/* Amount */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Số tiền:</label>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Số tiền:
+          </label>
           <input
             type="number"
             name="amount"
@@ -111,9 +138,15 @@ const UpdateBillModal = ({ isOpen, onRequestClose, billToEdit, onBillUpdated }) 
 
         {/* Date */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Ngày:</label>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Ngày:
+          </label>
           <DatePicker
-            selected={billData.date ? parse(billData.date, 'dd-MM-yyyy', new Date()) : null}
+            selected={
+              billData.date
+                ? parse(billData.date, 'dd-MM-yyyy', new Date())
+                : null
+            }
             onChange={handleDateChange}
             dateFormat="dd/MM/yyyy"
             placeholderText="dd/mm/yyyy"
@@ -123,7 +156,9 @@ const UpdateBillModal = ({ isOpen, onRequestClose, billToEdit, onBillUpdated }) 
 
         {/* Category Name */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Tên danh mục:</label>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Tên danh mục:
+          </label>
           <select
             name="category_id"
             value={billData.category_id}
@@ -141,7 +176,9 @@ const UpdateBillModal = ({ isOpen, onRequestClose, billToEdit, onBillUpdated }) 
 
         {/* Description */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Mô tả:</label>
+          <label className="block text-gray-700 font-semibold mb-2">
+            Mô tả:
+          </label>
           <textarea
             name="description"
             value={billData.description}
@@ -173,3 +210,4 @@ const UpdateBillModal = ({ isOpen, onRequestClose, billToEdit, onBillUpdated }) 
 };
 
 export default UpdateBillModal;
+

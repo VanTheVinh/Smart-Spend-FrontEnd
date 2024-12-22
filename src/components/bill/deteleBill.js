@@ -1,24 +1,27 @@
 import React from 'react';
 import Modal from 'react-modal';
+import { deleteBill } from '../../services/billService';
 
 Modal.setAppElement('#root');
 
-const DeleteBillModal = ({ isOpen, onRequestClose, billToDelete, onBillDeleted }) => {
+const DeleteBillModal = ({
+  isOpen,
+  onRequestClose,
+  billToDelete,
+  onBillDeleted,
+}) => {
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/delete-bill/${billToDelete.id}`, {
-        method: 'DELETE',
-      });
+      console.log('BillDelete.id', billToDelete.id);
 
-      const data = await response.json(); // If the response is JSON, log it
-      console.log('API response:', data);
-
-      if (response.ok) {
+      const response = await deleteBill(billToDelete.id); // Send delete request
+      console.log(response);
+      if (response) {
+        alert('Xóa hóa đơn thành công!');
         onBillDeleted(billToDelete.id); // Notify parent component about the deleted bill
-        onRequestClose(); // Close modal
+        onRequestClose(); // Close moda
       } else {
-        const errorData = await response.json();
-        alert(`Error: ${errorData.message || response.statusText}`);
+        alert('Xóa hóa đơn thất bại!');
       }
     } catch (error) {
       console.error('Error during delete request:', error);

@@ -61,12 +61,32 @@ export const getCategoryByUserId = async (userId) => {
   };
 
 // Hàm thêm danh mục mới
-export const createCategory = async (data) => {
+export const addCategory = async (data) => {
   try {
-    const response = await axios.post(`${API_URL}/category`, data);
+    const response = await axios.post(`${API_URL}/add-category`, data);
     return response.data; // Trả về phản hồi từ server sau khi thêm
   } catch (error) {
     console.error('Lỗi khi tạo danh mục:', error);
     throw error; // Để có thể xử lý lỗi ở nơi khác
+  }
+};
+
+export const updateCategory = async (categoryId, data) => {
+  try {
+      const response = await axios.put(`${API_URL}/update-category/${categoryId}`, data);
+      return response.data; // Trả về phản hồi từ server
+  } catch (error) {
+      console.error("Lỗi khi cập nhật nhóm:", error);
+      throw error; // Ném lỗi để xử lý ở nơi khác
+  }
+};
+
+export const deleteCategory = async (data) => {
+  try {
+    const response = await axios.delete(`${API_URL}/delete-category`, { data });
+    return response.data; // Trả về phản hồi từ server
+  } catch (error) {
+    console.error('Lỗi khi xóa danh mục:', error);
+    throw error;
   }
 };
