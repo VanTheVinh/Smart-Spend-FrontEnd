@@ -1,67 +1,57 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
-import AddBillModal from '../../components/bill/addBill';
-import UpdateBillModal from '../../components/bill/updateBill';
-import DeleteBillModal from '../../components/bill/deteleBill';
-import { getBills } from '~/services/billService';
-import { getCategoryByUserId } from '~/services/categoryService';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
-const BillList = ({ userId, groupId, onActionComplete }) => {
-  const [bills, setBills] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [filterType, setFilterType] = useState('ALL'); // Lọc theo ALL, THU, hoặc CHI
-  // const [sortOrder, setSortOrder] = useState('asc'); // 'asc' (tăng dần) hoặc 'desc' (giảm dần)
-  const [amountSortOrder, setAmountSortOrder] = useState('default'); // default, asc, desc
+import AddBillModal from '~/components/bill/addBill';
+import UpdateBillModal from '~/components/bill/updateBill';
+import DeleteBillModal from '~/components/bill/deteleBill';
+import { getBills } from '~/services/billService';
+import { getCategoryByUserId } from '~/services/categoryService';
+
+const BillList = ({ userId, groupId, onActionComplete, month, year, type }) => {
+  const [filterType, setFilterType] = useState('ALL');
+  const [amountSortOrder, setAmountSortOrder] = useState('default');
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [billToEdit, setBillToEdit] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [billToDelete, setBillToDelete] = useState(null);
   const [categoryNames, setCategoryNames] = useState({});
-  // const [showDropdown, setShowDropdown] = useState(false);
+  const [bills, setBills] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const userID = userId;
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchBillsData = async () => {
+    setLoading(true);
     try {
       let billData = [];
       if (groupId) {
         billData = await getBills({ group_id: groupId });
         billData = billData.filter((bill) => bill.is_group_bill);
       } else {
-        billData = await getBills({ user_id: userID });
+        billData = await getBills({ user_id: userId });
         billData = billData.filter(
           (bill) =>
-            !bill.is_group_bill && Number(bill.user_id) === Number(userID),
+            !bill.is_group_bill && Number(bill.user_id) === Number(userId),
         );
       }
-
-      // Sắp xếp theo ngày tăng dần
-      billData.sort((a, b) => new Date(a.date) - new Date(b.date));
-
       setBills(billData);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching bills:', error);
       setError(error.message);
       setLoading(false);
     }
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchCategoryNames = async () => {
     try {
       const userIds = [...new Set(bills.map((bill) => bill.user_id))];
       const names = {};
 
       for (const userId of userIds) {
-        const categories = await getCategoryByUserId(userId);
-
+        const categoriesData = await getCategoryByUserId(userId);
         for (const bill of bills) {
-          const category = categories.find(
+          const category = categoriesData.find(
             (category) => category.id === bill.category_id,
           );
           if (category) {
@@ -79,17 +69,16 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
     if (userId) {
       fetchBillsData();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, groupId]);
 
   useEffect(() => {
     if (bills.length > 0) {
       fetchCategoryNames();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bills, userId]);
 
   function handleEdit(bill) {
+    console.log('Edit bill:', bill);
     setBillToEdit(bill);
     setShowUpdateModal(true);
   }
@@ -99,30 +88,44 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
     setShowDeleteModal(true);
   };
 
-  // const handleBillAdded = () => {
-  //   fetchBillsData();
-  //   onActionComplete();
-  // };
-
   const handleBillUpdated = () => {
     fetchBillsData();
-    setShowUpdateModal(false);
+    setShowUpdateModal(false); // Close update modal after update
     onActionComplete();
   };
 
   const handleBillDeleted = (deletedBillId) => {
-    setBills((prevBills) =>
-      prevBills.filter((bill) => bill.id !== deletedBillId),
-    );
+    setBills(bills.filter((bill) => bill.id !== deletedBillId)); // Remove deleted bill from state
+    setShowDeleteModal(false); // Close delete modal after delete
     onActionComplete();
   };
 
-  // Lọc và sắp xếp hóa đơn
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
+    setBillToDelete(null);
+  };
+
+  useEffect(() => {
+    if (type) {
+      setFilterType(type);
+    }
+  }, [type]);
+
   const filteredBills = bills
-    .filter((bill) => (filterType === 'ALL' ? true : bill.type === filterType))
+    .filter((bill) => {
+      const isTypeMatch =
+        filterType === 'ALL' ? true : bill.type === filterType;
+
+      const [billDay, billMonth, billYear] = bill.date.split('-').map(Number);
+
+      const isMonthMatch = Number(month) === billMonth;
+      const isYearMatch = Number(year) === billYear;
+
+      return isTypeMatch && isMonthMatch && isYearMatch;
+    })
     .sort((a, b) => {
       if (amountSortOrder === 'default') {
-        return new Date(a.date) - new Date(b.date); // Sắp xếp theo ngày nếu là mặc định
+        return new Date(a.date) - new Date(b.date);
       }
       const amountA = a.amount;
       const amountB = b.amount;
@@ -142,32 +145,26 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
   }
 
   return (
-    <div className="flex flex-col justify-center mx-20">
-      <div className="p-10 bg-gray-100 min-h-screen">
-        {/* Khối lớn chứa tiêu đề, nút và danh sách hóa đơn */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          {/* Tiêu đề */}
-          <h3 className="text-3xl text-center font-bold mt-3">DANH SÁCH HÓA ĐƠN</h3>
-
+    <div className="flex flex-col justify-center ">
+      <div className=" min-h-screen">
+        <div className="bg-white rounded-xl ">
+          
           <div className="flex justify-between mb-4">
-            {/* Nút thêm hóa đơn */}
-            <div className="flex justify-start mb-6">
+            <div className="flex justify-start mb-2 bg-tealColor00">
               <AddBillModal onBillAdded={fetchBillsData} groupId={groupId} />
             </div>
-            {/* Bộ lọc */}
             <div className="my-4 space-x-4 text-gray-600">
-              <i class="fa-solid fa-filter"></i>
-              <select 
+              {/* <i className="fa-solid fa-filter"></i>
+              <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
               >
                 <option value="ALL">Tất cả</option>
                 <option value="THU">Thu nhập</option>
                 <option value="CHI">Chi tiêu</option>
-              </select>
+              </select> */}
 
-              {/* Lọc theo số tiền */}
-              <i class="fa-solid fa-filter-circle-dollar"></i>
+              <i className="fa-solid fa-filter-circle-dollar"></i>
               <select
                 value={amountSortOrder}
                 onChange={(e) => toggleAmountSortOrder(e.target.value)}
@@ -179,14 +176,13 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
             </div>
           </div>
 
-          {/* Danh sách hóa đơn */}
           {filteredBills.length === 0 ? (
             <p className="text-center text-gray-600">No bills found.</p>
           ) : (
-            <div className="overflow-x-auto rounded-lg shadow-lg">
-              <table className="min-w-full border-collapse text-center bg-white shadow-md">
+            <div className="overflow-x-auto rounded-xl shadow-lg">
+              <table className="min-w-full text-center bg-white">
                 <thead>
-                  <tr className="text-black border-b-2 bg-tealFirsttd border-tealCustom">
+                  <tr className="text-black border-b-2 bg-tealColor06 border-tealColor00">
                     <th className="py-4 px-4">Type</th>
                     <th className="py-4 px-4">Amount</th>
                     <th className="py-4 px-4">Date</th>
@@ -223,21 +219,25 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
                         {categoryNames[bill.category_id] || 'Loading...'}
                       </td>
                       <td className="py-4 px-4">{bill.description}</td>
-                      <td className="py-4 px-4">{bill.user_id}</td>
+                      <td className="py-4 px-4">
+                        <img
+                          src={`https://raw.githubusercontent.com/VanTheVinh/avatars-storage-spend-web/main/avatars/avatar_user_${bill.user_id}.jpg`}
+                          alt={`Avatar of user ${bill.user_id}`}
+                          className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md hover:shadow-lg transition-shadow duration-300"
+                        />
+                      </td>
                       <td className="py-4 px-4 relative">
                         <button
                           onClick={() => handleEdit(bill)}
-                          className="mr-6 px-2 py-1 text-tealEdit rounded-md"
+                          className="mr-6 px-2 py-1 text-tealColor00"
                         >
-                          <i className="fa-solid fa-pen"></i>{' '}
-                          {/* Pencil icon */}
+                          <i className="fa-solid fa-pen"></i>
                         </button>
                         <button
                           onClick={() => handleDelete(bill)}
-                          className="px-2 py-1 text-red-600 rounded-md"
+                          className="px-2 py-1 text-red-600"
                         >
-                          <i className="fa-solid fa-trash-can"></i>{' '}
-                          {/* Trash can icon */}
+                          <i className="fa-solid fa-trash"></i>
                         </button>
                       </td>
                     </tr>
@@ -246,26 +246,25 @@ const BillList = ({ userId, groupId, onActionComplete }) => {
               </table>
             </div>
           )}
+
+          {showUpdateModal && (
+            <UpdateBillModal
+              isOpen={showUpdateModal}
+              onRequestClose={() => setShowUpdateModal(false)}
+              billToEdit={billToEdit}
+              onBillUpdated={handleBillUpdated}
+            />
+          )}
+
+          {showDeleteModal && (
+            <DeleteBillModal
+              isOpen={showDeleteModal}
+              onRequestClose={handleCloseDeleteModal}
+              billToDelete={billToDelete}
+              onBillDeleted={handleBillDeleted}
+            />
+          )}
         </div>
-
-        {/* Modals */}
-        <UpdateBillModal
-          isOpen={showUpdateModal}
-          onRequestClose={() => setShowUpdateModal(false)}
-          billToEdit={billToEdit}
-          onBillUpdated={() => {
-            fetchBillsData();
-            setShowUpdateModal(false);
-            handleBillUpdated();
-          }}
-        />
-
-        <DeleteBillModal
-          isOpen={showDeleteModal}
-          onRequestClose={() => setShowDeleteModal(false)}
-          billToDelete={billToDelete}
-          onBillDeleted={handleBillDeleted}
-        />
       </div>
     </div>
   );

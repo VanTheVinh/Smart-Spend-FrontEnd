@@ -34,7 +34,6 @@ const UpdateCategory = ({
   );
   const [budget, setBudget] = useState(0);
   const [percentageLimitCurrent, setPercentageLimitCurrent] = useState(0);
-  
 
   // Lấy thông tin người dùng
   useEffect(() => {
@@ -52,7 +51,7 @@ const UpdateCategory = ({
 
       fetchUserBudget();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category?.user_id]);
 
   // const formatCurrency = (amount) => {
@@ -81,7 +80,8 @@ const UpdateCategory = ({
 
     if (name === 'percentage_limit') {
       let newPercentageLimit = Math.min(
-        Math.max(parseFloat(value) || 0, 0), percentageLimit,
+        Math.max(parseFloat(value) || 0, 0),
+        percentageLimit,
       ); // Giới hạn tối đa là 100
       const newAmount = (newPercentageLimit / 100) * budget; // Tính toán amount dựa trên `budget`
       setCategoryData({
@@ -132,25 +132,16 @@ const UpdateCategory = ({
 
       console.log('Response:', response);
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Category updated:', result);
+      // Cập nhật danh sách categories sau khi sửa
+      setCategories((prevCategories) =>
+        prevCategories.map((cat) =>
+          cat.id === category.id ? { ...cat, ...response.category } : cat,
+        ),
+      );
 
-        // Cập nhật danh sách categories sau khi sửa
-        setCategories((prevCategories) =>
-          prevCategories.map((cat) =>
-            cat.id === category.id ? { ...cat, ...result.category } : cat,
-          ),
-        );
-
-        alert('Cập nhật danh mục thành công!');
-        onUpdateSuccess(); // Gọi hàm callback để cập nhật lại danh sách categories
-        onRequestClose(); // Đóng modal sau khi submit thành công
-      } else {
-        const errorData = await response.json();
-        console.error('Error updating category:', errorData);
-        alert(`Error: ${errorData.message || response.statusText}`);
-      }
+      alert('Cập nhật danh mục thành công!');
+      onUpdateSuccess(); // Gọi hàm callback để cập nhật lại danh sách categories
+      onRequestClose(); // Đóng modal sau khi submit thành công
     } catch (error) {
       console.error('Error submitting update:', error);
       alert(`Network error: ${error.message}`);

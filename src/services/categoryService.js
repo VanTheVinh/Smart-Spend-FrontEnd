@@ -2,12 +2,13 @@
 
 import axios from 'axios';
 
-const API_URL = 'https://smart-spend-backend-production.up.railway.app'; // Địa chỉ API của bạn
+// const API_URL = 'https://smart-spend-backend-production.up.railway.app'; // Địa chỉ API của bạn
+const API_URL_LOCAL = 'http://127.0.0.1:5000'; // Địa chỉ API của Flask 
 
 // Hàm lấy danh sách danh mục từ database
 export const getCategories = async (userId, categoryType) => {
   try {
-    const response = await axios.get(`${API_URL}/get-categories`, {
+    const response = await axios.get(`${API_URL_LOCAL}/get-categories`, {
       params: {
         user_id: userId,
         category_type: categoryType, // Thêm category_type vào params
@@ -32,7 +33,7 @@ export const getCategoryName = async (categoryId, categories) => {
 // Hàm lấy chi tiết danh mục theo user_id và category_id
 export const getCategoryByUserIdAndCategoryId = async (userId, categoryId) => {
   try {
-    const response = await axios.get(`${API_URL}/get-categories`, {
+    const response = await axios.get(`${API_URL_LOCAL}/get-categories`, {
       params: {
         user_id: userId,
         category_id: categoryId, // Thêm category_id vào params
@@ -48,7 +49,7 @@ export const getCategoryByUserIdAndCategoryId = async (userId, categoryId) => {
 // Hàm lấy chi tiết danh mục theo user_id
 export const getCategoryByUserId = async (userId) => {
     try {
-      const response = await axios.get(`${API_URL}/get-categories`, {
+      const response = await axios.get(`${API_URL_LOCAL}/get-categories`, {
         params: {
           user_id: userId,
         },
@@ -63,7 +64,7 @@ export const getCategoryByUserId = async (userId) => {
 // Hàm thêm danh mục mới
 export const addCategory = async (data) => {
   try {
-    const response = await axios.post(`${API_URL}/add-category`, data);
+    const response = await axios.post(`${API_URL_LOCAL}/add-category`, data);
     return response.data; // Trả về phản hồi từ server sau khi thêm
   } catch (error) {
     console.error('Lỗi khi tạo danh mục:', error);
@@ -73,7 +74,7 @@ export const addCategory = async (data) => {
 
 export const updateCategory = async (categoryId, data) => {
   try {
-      const response = await axios.put(`${API_URL}/update-category/${categoryId}`, data);
+      const response = await axios.put(`${API_URL_LOCAL}/update-category/${categoryId}`, data);
       return response.data; // Trả về phản hồi từ server
   } catch (error) {
       console.error("Lỗi khi cập nhật nhóm:", error);
@@ -83,7 +84,7 @@ export const updateCategory = async (categoryId, data) => {
 
 export const deleteCategory = async (data) => {
   try {
-    const response = await axios.delete(`${API_URL}/delete-category`, { data });
+    const response = await axios.delete(`${API_URL_LOCAL}/delete-category`, { data });
     return response.data; // Trả về phản hồi từ server
   } catch (error) {
     console.error('Lỗi khi xóa danh mục:', error);

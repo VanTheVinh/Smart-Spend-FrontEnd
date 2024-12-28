@@ -76,33 +76,35 @@ const Group = () => {
     }
   };
 
+
   const handleGroupDetail = (groupId) => {
+    console.log('groupId:', groupId); 
+    
     navigate(`/group-detail/${groupId}`);
   };
 
   return (
-    <div className="flex flex-col justify-center mx-20">
-      <div className="p-10 bg-gray-100 min-h-screen">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-3xl text-center font-bold mb-10">
+    <div className="flex flex-col justify-center mx-2">
+      <div className="p-10 bg-tealColor07 min-h-screen">
+        <div className="bg-white p-6 rounded-xl shadow-md">
+          <h3 className="text-3xl text-tealColor11 text-center font-bold mb-10">
             DANH SÁCH QUỸ NHÓM
           </h3>
 
           <div className="flex justify-between mb-4">
             <button
               onClick={() => setIsAddingGroup(true)}
-              className="px-4 py-2 bg-tealCustom text-white rounded-xl hover:bg-teal-600"
+              className="px-4 py-2 bg-tealColor00 text-white rounded-xl hover:bg-teal-600"
             >
               <i className="fa-solid fa-plus"></i>
             </button>
           </div>
 
           {groups.length > 0 ? (
-            <div className="overflow-x-auto rounded-lg shadow-lg">
-              <table className="min-w-full border-collapse text-center bg-white shadow-md">
+            <div className="overflow-x-auto rounded-xl ">
+              <table className="min-w-full text-center bg-white ">
                 <thead>
-                  <tr className="text-black border-b-2 bg-tealFirsttd border-tealCustom">
-                    <th className="py-4 px-4">ID</th>
+                  <tr className="text-black border-b-2 bg-tealColor06 border-tealColor11">
                     <th className="py-4 px-4">Tên Nhóm</th>
                     <th className="py-4 px-4">Số Tiền</th>
                     <th className="py-4 px-4">Ngày Tạo</th>
@@ -116,7 +118,6 @@ const Group = () => {
                       key={group.id}
                       className={index % 2 === 1 ? 'bg-tdOdd' : 'bg-white'}
                     >
-                      <td className="py-4 px-4">{group.id}</td>
                       <td className="py-4 px-4">{group.group_name}</td>
                       <td className="py-4 px-4">{group.amount}</td>
                       <td className="py-4 px-4">{group.created_at}</td>

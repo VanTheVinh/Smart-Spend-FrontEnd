@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '~/services/authService';
 import { AppContext } from '~/contexts/appContext';
@@ -6,7 +6,8 @@ import { HiEye, HiEyeOff } from 'react-icons/hi';
 //import '../../style/index.css'; // Import file index.css chứa cấu hình Tailwind
 
 const Login = () => {
-  const { setUserId, userId, setBudget } = useContext(AppContext);
+  const { setUserId, userId, isAuthenticated, setIsAuthenticated } =
+    useContext(AppContext);
   console.log('User ID:', userId); // Kiểm tra giá trị userId từ context
 
   const [username, setUsername] = useState('');
@@ -14,7 +15,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false); // Trạng thái tải
-  const [passwordVisible, setPasswordVisible] = useState(false); // Trạng thái hiển thị mật khẩu
+  // const [passwordVisible, setPasswordVisible] = useState(false); // Trạng thái hiển thị mật khẩu
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -30,19 +31,35 @@ const Login = () => {
     // Kiểm tra định dạng tên người dùng (chỉ cho phép chữ và số, từ 3-15 ký tự)
     const usernameRegex = /^[a-zA-Z0-9_]{3,15}$/;
     if (!usernameRegex.test(username)) {
-      setMessage('Tên người dùng chỉ được chứa chữ cái, số và dấu gạch dưới, từ 3-15 ký tự.');
+      setMessage(
+        'Tên người dùng chỉ được chứa chữ cái, số và dấu gạch dưới, từ 3-15 ký tự.',
+      );
       return false;
     }
 
     // Kiểm tra mật khẩu (ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường và số)
     const passwordRegex = /^(?=.*\d)[A-Za-z\d]{6,}$/;
     if (!passwordRegex.test(password)) {
-      setMessage('Mật khẩu phải có ít nhất 6 ký tự,  một chữ cái viết thường và một chữ số.');
+      setMessage(
+        'Mật khẩu phải có ít nhất 6 ký tự,  một chữ cái viết thường và một chữ số.',
+      );
       return false;
     }
 
     return true;
   };
+
+  useEffect(() => {
+    // Kiểm tra nếu có accessToken trong localStorage
+    const accessToken = localStorage.getItem('access_token');
+    console.log('Access token:', accessToken);
+
+    if (accessToken) {
+      setIsAuthenticated(true); // Người dùng đã đăng nhập
+    } else {
+      setIsAuthenticated(false); // Người dùng chưa đăng nhập
+    }
+  }, [setIsAuthenticated]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -58,17 +75,28 @@ const Login = () => {
     try {
       const response = await login(username, password);
 
-      const userId = response.data.user_info.user_id; // Lấy user_id từ phản hồi API
-      const budget = response.data.user_info.budget;
+      // console.log('Login data:', response.data); // Debugging
 
-      setBudget(budget); // Lưu budget vào context
+      const userId = response.data.user_info.user_id; // Lấy user_id từ phản hồi API
+      // // const budget = response.data.user_info.budget;
+      const access_token = response.data.access_token;
+      const refresh_token = response.data.refresh_token;
+
+      // setBudget(budget); // Lưu budget vào context
       setUserId(userId); // Lưu user_id vào context
       setMessage(response.data.message);
 
+      // Lưu access token và refresh token vào localStorage
+      localStorage.setItem('access_token', access_token);
+      localStorage.setItem('refresh_token', refresh_token);
       localStorage.setItem('user_id', userId); // Lưu vào localStorage
-      localStorage.setItem('budget', budget); // Lưu vào localStorage
-      navigate('/home'); // Chuyển hướng tới dashboard
-      // console.log(response.data.user_info.user_id);
+
+      setIsAuthenticated(true);
+      // window.location.reload(); // Tải lại trang sau khi đăng nhập thành công
+
+      // Chờ 2 giây trước khi điều hướng
+        navigate('/'); // Chuyển hướng tới dashboard
+        window.location.reload();
     } catch (error) {
       if (error.response && error.response.data) {
         setMessage(error.response.data.message);
@@ -82,10 +110,9 @@ const Login = () => {
 
   return (
     <div
-      className="flex items-center justify-center h-screen"
-      style={{ backgroundColor: '#f0fdfa' }}
+      className="flex bg-tealColor06 items-center justify-center h-screen"
     >
-      <div className="bg-white p-16 rounded-lg shadow-lg w-full max-w-md">
+      <div className="bg-tealColor04 p-16 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
           Đăng nhập
         </h2>
@@ -135,7 +162,7 @@ const Login = () => {
             className={`mt-3 w-full px-4 py-2.5 text-white font-bold rounded-md transition ${
               loading
                 ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-tealCustom :hoverbg-teal-600'
+                : 'bg-tealColor00 :hoverbg-teal-600'
             }`}
           >
             {loading ? 'Đang xử lý...' : 'Đăng nhập'}
@@ -146,21 +173,24 @@ const Login = () => {
               <input type="checkbox" className="mr-2" />
               Lưu mật khẩu
             </label>
-            <a href="#" className="text-sm text-gray-500 hover:underline">
+            <Link
+              to="/forgot-password"
+              className="text-sm text-gray-500 hover:underline"
+            >
               Quên mật khẩu?
-            </a>
+            </Link>
           </div>
 
           <div className="text-center mt-4">
             <label className="text-sm text-gray-500">
               Bạn chưa có tài khoản?
             </label>
-            <a
-              href="register"
-              className="ml-2 tracking-wider text-center text-sm hover:underline"
+            <Link
+              to="/register"
+              className="text-sm text-gray-500 hover:underline"
             >
               Đăng ký
-            </a>
+            </Link>
           </div>
         </form>
         {message && (

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Modal from 'react-modal';
 import { format, parse } from 'date-fns';
 import DatePicker from 'react-datepicker';
@@ -7,12 +7,14 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 
 import { AppContext } from '~/contexts/appContext';
 import { addBill } from '~/services/billService';
+import { getCategoryByUserId } from '~/services/categoryService';
 
 Modal.setAppElement('#root');
 
 const AddBillModal = ({ onBillAdded, groupId }) => {
-  const { userId, categories, routeBill } = useContext(AppContext);
+  const { userId, routeBill } = useContext(AppContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
 
   // console.log('Group ID on ADDBILL:', groupId);
 
@@ -22,9 +24,37 @@ const AddBillModal = ({ onBillAdded, groupId }) => {
     date: '',
     category_id: '',
     description: '',
-    user_id: parseInt(userId),
+    user_id: userId,
     group_id: parseInt(groupId),
   });
+
+  // console.log('Bill Data:', billData);
+
+  useEffect(() => {
+    
+    const fetchCategoriesAndSetBillData = async () => {
+      try {
+        if (onBillAdded) {
+          
+          const categories = await getCategoryByUserId(userId);
+          setCategories(categories);
+          // console.log('Fetched categories:', categories);
+
+          // Nếu cần cập nhật categories vào state
+          // setBillData({
+          //   ...onBillAdded,
+          //   // Cập nhật userId nếu cần
+          //   user_id: userId,
+          // });
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategoriesAndSetBillData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ userId]);
 
   const [selectedType, setSelectedType] = useState('');
 
@@ -58,7 +88,7 @@ const AddBillModal = ({ onBillAdded, groupId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log('Bill Data:', billData);
+    console.log('Bill Data:', billData);
 
     try {
       const result = await addBill(billData);

@@ -1,10 +1,12 @@
 // groupService.js
 import axios from 'axios';
-const API_URL = 'https://smart-spend-backend-production.up.railway.app'; // Địa chỉ API của bạn
+// const API_URL = 'https://smart-spend-backend-production.up.railway.app'; // Địa chỉ API của bạn
+const API_URL_LOCAL = 'http://127.0.0.1:5000'; // Địa chỉ API của Flask 
+
 
 export const createGroup = async (data) => {
   try {
-    const response = await axios.post(`${API_URL}/create-group`, data);
+    const response = await axios.post(`${API_URL_LOCAL}/create-group`, data);
     return response.data; // Trả về phản hồi từ server
   } catch (error) {
     console.error('Lỗi khi tạo nhóm:', error);
@@ -14,7 +16,7 @@ export const createGroup = async (data) => {
 
 export const getGroup = async (params) => {
   try {
-      const response = await axios.get(`${API_URL}/get-group`, { params });
+      const response = await axios.get(`${API_URL_LOCAL}/get-group`, { params });
       return response.data; // Trả về danh sách nhóm
   } catch (error) {
       console.error("Lỗi khi lấy danh sách nhóm:", error);
@@ -24,7 +26,7 @@ export const getGroup = async (params) => {
 
 export const updateGroupDetail = async (groupId, data) => {
   try {
-      const response = await axios.put(`${API_URL}/update-group/${groupId}`, data);
+      const response = await axios.put(`${API_URL_LOCAL}/update-group/${groupId}`, data);
       return response.data; // Trả về phản hồi từ server
   } catch (error) {
       console.error("Lỗi khi cập nhật nhóm:", error);
@@ -34,7 +36,7 @@ export const updateGroupDetail = async (groupId, data) => {
 
 export const deleteGroup = async (data) => {
   try {
-    const response = await axios.delete(`${API_URL}/delete-group`, { data });
+    const response = await axios.delete(`${API_URL_LOCAL}/delete-group`, { data });
     return response.data; // Trả về phản hồi từ server
   } catch (error) {
     console.error('Lỗi khi xóa nhóm:', error);
@@ -46,7 +48,7 @@ export const deleteGroup = async (data) => {
 export const getUserDetail = async (userId) => {
   try {
     // Gửi yêu cầu GET đến API để lấy thông tin chi tiết người dùng
-    const response = await axios.get(`${API_URL}/users/${userId}`);
+    const response = await axios.get(`${API_URL_LOCAL}/users/${userId}`);
     return response.data; // Trả về thông tin người dùng
   } catch (error) {
     console.error("Lỗi khi lấy thông tin người dùng:", error);
@@ -57,7 +59,7 @@ export const getUserDetail = async (userId) => {
 export const getGroupMembers = async (params) => {
   try {
     // Gửi yêu cầu GET đến API với các tham số cần thiết
-    const response = await axios.get(`${API_URL}/get-member`, { params });
+    const response = await axios.get(`${API_URL_LOCAL}/get-member`, { params });
     return response.data; // Trả về danh sách thành viên nhóm
   } catch (error) {
     console.error("Lỗi khi lấy danh sách thành viên nhóm:", error);
@@ -67,7 +69,7 @@ export const getGroupMembers = async (params) => {
 
 export const getGroupDetail = async (groupId) => {
   try {
-    const response = await axios.get(`${API_URL}/get-group-detail`, {
+    const response = await axios.get(`${API_URL_LOCAL}/get-group-detail`, {
       params: { group_id: groupId },
     });
     return response.data; // Trả về dữ liệu nhóm
@@ -79,7 +81,7 @@ export const getGroupDetail = async (groupId) => {
 
 export const searchUser = async (fullname) => {
   try {
-    const response = await axios.get(`${API_URL}/search-user`, {
+    const response = await axios.get(`${API_URL_LOCAL}/search-user`, {
       params: { fullname },
     });
     return response.data; // Trả về danh sách người dùng
@@ -92,7 +94,7 @@ export const searchUser = async (fullname) => {
 
 export const addMember = async (groupId, userId) => {
   try {
-    const response = await axios.post(`${API_URL}/add-member`, {
+    const response = await axios.post(`${API_URL_LOCAL}/add-member`, {
       group_id: groupId,
       user_id: userId,
     });
@@ -105,7 +107,7 @@ export const addMember = async (groupId, userId) => {
 
 export const updateMemberAmount = async (groupId, userId, memberAmount, updateBy) => {
   try {
-    const response = await axios.put(`${API_URL}/update-member-amount`, {
+    const response = await axios.put(`${API_URL_LOCAL}/update-member-amount`, {
       group_id: groupId,
       user_id: userId,
       member_amount: memberAmount,
@@ -128,7 +130,7 @@ export const updateMemberAmount = async (groupId, userId, memberAmount, updateBy
 
 export const deleteMember = async (data) => {
   try {
-    const response = await axios.delete(`${API_URL}/delete-member`, { data });
+    const response = await axios.delete(`${API_URL_LOCAL}/delete-member`, { data });
     return response.data; // Trả về phản hồi từ server
   } catch (error) {
     console.error('Lỗi khi xóa thành viên:', error);

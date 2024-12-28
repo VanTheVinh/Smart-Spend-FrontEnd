@@ -129,10 +129,10 @@ const Profile = () => {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 overflow-x-hidden">
+    <div className="min-h-screen flex justify-center items-center overflow-x-hidden">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white rounded-lg shadow-md p-11"
+        className="w-full max-w-md bg-white rounded- shadow-md p-11"
       >
         <div className="flex flex-col items-center">
           <img
@@ -146,13 +146,13 @@ const Profile = () => {
             onChange={handleAvatarUpload}
             disabled={isLoading}
             accept="image/*"
-            className="text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            className="text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-teal-100 file:text-tealCustom hover:file:bg-hovercolor"
           />
-          {isLoading && <p className="text-blue-500">Uploading...</p>}
+          {isLoading && <p className="text-tealCustom">Uploading...</p>}
           {error && <p className="text-red-500">{error}</p>}
         </div>
 
-        <div className="mb-4">
+        <div className="my-4">
           <label className="block text-gray-700 text-xl font-bold mb-2">
             Tên người dùng
           </label>
@@ -213,7 +213,7 @@ const Profile = () => {
           Cập nhật thông tin
         </button>
 
-        {isLoading && <p className="text-blue-500">Cập nhật...</p>}
+        {isLoading && <p className="text-tealCustom">Cập nhật...</p>}
         {error && <p className="text-red-500">{error}</p>}
       </form>
     </div>

@@ -23,7 +23,7 @@ const UpdateBillModal = ({
     amount: 0,
     date: '',
     category_id: '',
-    // userId: userId || 0,
+    user_id: userId,
     description: '',
   });
   const [categories, setCategories] = useState([]);
@@ -75,10 +75,13 @@ const UpdateBillModal = ({
     // };
 
 
-    console.log(' bill data nè:', billData);
+    // console.log(' bill data nè:', billData);
     // console.log(' bill id:', billToEdit.id);
 
     try {
+      console.log('Update bill data:', billData);
+      
+      
       const updatedBill = await updateBill(billToEdit.id, billData);
 
       // console.log('Updated bill nè:', updatedBill);
