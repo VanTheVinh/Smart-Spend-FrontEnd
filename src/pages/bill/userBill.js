@@ -48,15 +48,15 @@ const UserBill = () => {
   const [year, month] = selectedDate.split('-').map(Number);
 
   return (
-    <div className="px-10 pt-8 bg-gray-100">
+    <div className="px-14 pt-4 bg-gray-100">
       {/* Header */}
-      {/* <h1 className="text-3xl font-bold text-center mb-8 text-tealColor00">
-        QUẢN LÝ HÓA ĐƠN VÀ NGÂN SÁCH
-      </h1> */}
+      <h1 className="text-3xl font-bold text-center mb-8 text-tealColor11">
+        QUẢN LÝ HÓA ĐƠN
+      </h1>
 
       {/* Ngân sách và báo cáo */}
       <div className="grid gap-4 md:grid-cols-2 mb-4">
-        <div className="bg-white shadow rounded-lg p-6">
+        <div className="bg-white shadow rounded-lg pl-56 pt-10 border-b-4 border-teal-500">
           <BudgetUpdate
             userId={userId}
             currentBudget={budget}

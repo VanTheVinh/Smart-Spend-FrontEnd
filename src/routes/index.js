@@ -8,7 +8,7 @@ import Profile from '~/pages/profile';
 import DashboardLayout from '~/components/dashboard';
 import UserCategory from '~/pages/category/userCategory';
 import DashboardOverview from '~/pages/dashBoardOverview';
-// import ResetPassword from '~/components/ResetPassword';
+import Alert from '~/components/alert';
 
 const AppRouter = () => {
   return (
@@ -23,7 +23,7 @@ const AppRouter = () => {
       <Route path="/group-detail/:groupId" element={<GroupDetail />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/dashboard" element={<DashboardOverview />} />
-      {/* <Route path="/reset-password/:token" element={<ResetPassword />} /> */}
+      <Route path="/alert" element={<Alert />} />
       </Route>
     </Routes>
   );

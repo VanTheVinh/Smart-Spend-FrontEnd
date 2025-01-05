@@ -138,7 +138,7 @@ const AddBillModal = ({ onBillAdded, groupId }) => {
         className="modal max-w-lg w-full p-9 bg-white rounded-lg shadow-xl"
         overlayClassName="overlay fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center"
       >
-        <h2 className="text-2xl font-bold mb-4 text-center">Thêm hóa đơn</h2>
+        <h2 className="text-4xl text-tealColor11 font-bold mb-8 text-center">Thêm hóa đơn</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-gray-700 font-semibold mb-2">
@@ -154,6 +154,29 @@ const AddBillModal = ({ onBillAdded, groupId }) => {
               <option value="">Chọn loại</option>
               <option value="THU">THU</option>
               <option value="CHI">CHI</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Tên danh mục:
+            </label>
+            <select
+              name="category_id"
+              value={billData.category_id}
+              onChange={handleChange}
+              required
+              disabled={!selectedType}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+            >
+              <option value="">Chọn danh mục</option>
+              {categories
+                .filter((cat) => cat.category_type === selectedType)
+                .map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.category_name}
+                  </option>
+                ))}
             </select>
           </div>
 
@@ -188,28 +211,7 @@ const AddBillModal = ({ onBillAdded, groupId }) => {
             />
           </div>
 
-          <div>
-            <label className="block text-gray-700 font-semibold mb-2">
-              Tên danh mục:
-            </label>
-            <select
-              name="category_id"
-              value={billData.category_id}
-              onChange={handleChange}
-              required
-              disabled={!selectedType}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-            >
-              <option value="">Chọn danh mục</option>
-              {categories
-                .filter((cat) => cat.category_type === selectedType)
-                .map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.category_name}
-                  </option>
-                ))}
-            </select>
-          </div>
+          
 
           <div>
             <label className="block text-gray-700 font-semibold mb-2">
@@ -243,7 +245,7 @@ const AddBillModal = ({ onBillAdded, groupId }) => {
           <div className="flex justify-between gap-4">
             <button
               type="submit"
-              className="bg-tealCustom text-white font-bold px-6 py-2 rounded-lg hover:bg-teal-600"
+              className="bg-tealColor11 text-white font-bold px-6 py-2 rounded-lg hover:bg-teal-600"
             >
               Thêm hóa đơn
             </button>

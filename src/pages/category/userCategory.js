@@ -37,7 +37,7 @@ const UserCategory = () => {
   }
 
   return (
-    <div className="bg-tealColor07 px-10">
+    <div className="bg-tealColor07 px-20">
       {/* Sử dụng BudgetUpdate component */}
       <div>
         <BudgetUpdate

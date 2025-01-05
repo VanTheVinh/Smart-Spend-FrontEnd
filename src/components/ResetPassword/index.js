@@ -31,34 +31,66 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="reset-password-container">
-      <h2>Đặt lại mật khẩu</h2>
-      {message && <p className="success-message">{message}</p>}
-      {error && <p className="error-message">{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="password">Mật khẩu mới:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="confirmPassword">Xác nhận mật khẩu:</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Đặt lại mật khẩu</button>
-      </form>
-    </div>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+  <div className="bg-white p-8 rounded-xl shadow-lg w-11/12 max-w-md">
+    <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+      Đặt lại mật khẩu
+    </h2>
+    {message && (
+      <p className="text-green-600 bg-green-100 p-3 rounded-lg text-center mb-4">
+        {message}
+      </p>
+    )}
+    {error && (
+      <p className="text-red-600 bg-red-100 p-3 rounded-lg text-center mb-4">
+        {error}
+      </p>
+    )}
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div>
+        <label
+          htmlFor="password"
+          className="block text-gray-700 font-semibold mb-2"
+        >
+          Mật khẩu mới:
+        </label>
+        <input
+          type="password"
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 border-gray-300"
+          placeholder="Nhập mật khẩu mới"
+        />
+      </div>
+      <div>
+        <label
+          htmlFor="confirmPassword"
+          className="block text-gray-700 font-semibold mb-2"
+        >
+          Xác nhận mật khẩu:
+        </label>
+        <input
+          type="password"
+          id="confirmPassword"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 border-gray-300"
+          placeholder="Nhập lại mật khẩu"
+        />
+      </div>
+      <button
+        type="submit"
+        className="w-full py-2 px-4 text-white font-bold rounded-lg bg-teal-500 hover:bg-teal-600 transition"
+      >
+        Đặt lại mật khẩu
+      </button>
+    </form>
+  </div>
+</div>
+
   );
 };
 

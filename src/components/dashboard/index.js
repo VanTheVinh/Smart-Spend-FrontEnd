@@ -8,6 +8,7 @@ import GroupDetail from '~/pages/group/groupDetail'; // Import GroupDetail
 import { getUserInfo } from '~/services/userService';
 import { AppContext } from '~/contexts/appContext';
 import { logout } from '~/services/authService';
+import AlertComponent from '../alert';
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ const DashboardLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [avatar, setAvatar] = useState('');
   const [fullName, setFullName] = useState('');
+  const [isAlertOpen, setIsAlertOpen] = useState(false); // Thêm state để điều khiển hiển thị alert
 
   const pages = {
     UserBill: <UserBill />,
@@ -46,7 +48,9 @@ const DashboardLayout = () => {
   }, [userId]);
 
   const handleLogout = async () => {
-    const confirmLogout = window.confirm('Bạn có chắc chắn muốn đăng xuất không?');
+    const confirmLogout = window.confirm(
+      'Bạn có chắc chắn muốn đăng xuất không?'
+    );
     if (!confirmLogout) {
       return;
     }
@@ -67,6 +71,11 @@ const DashboardLayout = () => {
 
   const isGroupDetailPage = location.pathname.startsWith('/group-detail/');
 
+  // Hàm mở/đóng AlertComponent
+  const toggleAlert = () => {
+    setIsAlertOpen(!isAlertOpen);
+  };
+
   return (
     <div className="flex flex-col min-h-screen overflow-hidden">
       <header className="w-full bg-tealColor11 text-white py-2 px-6 flex items-center justify-between fixed top-0 left-0 z-10">
@@ -79,12 +88,18 @@ const DashboardLayout = () => {
           </button>
           <h1 className="ml-4 text-2xl font-semibold">Ứng dụng quản lý chi tiêu</h1>
         </div>
+        <div className="flex items-center pr-12">
+          {/* Icon chuông, khi click sẽ hiển thị AlertComponent */}
+          <button onClick={toggleAlert}>
+            <i className="fa-solid fa-bell cursor-pointer text-2xl"></i>
+          </button>
+        </div>
       </header>
 
       <div className="flex mt-20">
         {/* Sidebar */}
         <div
-          className={`fixed top-0 left-0 min-h-screen bg-tealColor06 text-black font-bold flex flex-col transform transition-transform duration-300 ${
+          className={`fixed left-0 min-h-screen bg-tealColor06 text-black font-bold flex flex-col transform transition-transform duration-300 ${
             isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
           style={{ width: '20rem' }}
@@ -97,17 +112,15 @@ const DashboardLayout = () => {
                 className="w-full h-full rounded-full object-cover"
               />
             </div>
-            <h2 className="mt-4 text-lg font-semibold">{fullName || 'Người dùng'}</h2>
+            <h2 className="mt-4 text-3xl font-bold">{fullName || 'Người dùng'}</h2>
             <hr className="w-full border-t-1 border-tealEdit mt-6" />
           </div>
 
           <ul className="flex flex-col mt-4 cursor-pointer">
             <li
               onClick={() => setCurrentPage('Home')}
-              className={`flex items-center px-6 py-4 ${
-                currentPage === 'Home'
-                  ? 'bg-teal-600 text-white'
-                  : 'hover:bg-tealColor06'
+              className={`flex items-center py-4 pl-10 ${
+                currentPage === 'Home' ? 'bg-teal-600 text-white' : 'hover:bg-tealColor08'
               }`}
             >
               <i className="fa-solid fa-house"></i>
@@ -116,10 +129,8 @@ const DashboardLayout = () => {
 
             <li
               onClick={() => setCurrentPage('UserBill')}
-              className={`flex items-center px-6 py-4 ${
-                currentPage === 'UserBill'
-                  ? 'bg-teal-600 text-white'
-                  : 'hover:bg-tealColor06'
+              className={`flex items-center py-4 pl-10 ${
+                currentPage === 'UserBill' ? 'bg-teal-600 text-white' : 'hover:bg-tealColor08'
               }`}
             >
               <i className="fa-solid fa-file-invoice-dollar"></i>
@@ -128,10 +139,8 @@ const DashboardLayout = () => {
 
             <li
               onClick={() => setCurrentPage('UserCategory')}
-              className={`flex items-center px-6 py-4 ${
-                currentPage === 'UserCategory'
-                  ? 'bg-teal-600 text-white'
-                  : 'hover:bg-tealColor06'
+              className={`flex items-center py-4 pl-10 ${
+                currentPage === 'UserCategory' ? 'bg-teal-600 text-white' : 'hover:bg-tealColor08'
               }`}
             >
               <i className="fa-solid fa-layer-group"></i>
@@ -140,10 +149,8 @@ const DashboardLayout = () => {
 
             <li
               onClick={() => setCurrentPage('Group')}
-              className={`flex items-center px-6 py-4 ${
-                currentPage === 'Group'
-                  ? 'bg-teal-600 text-white'
-                  : 'hover:bg-tealColor06'
+              className={`flex items-center py-4 pl-10 ${
+                currentPage === 'Group' ? 'bg-teal-600 text-white' : 'hover:bg-tealColor08'
               }`}
             >
               <i className="fa-solid fa-users-viewfinder"></i>
@@ -151,10 +158,8 @@ const DashboardLayout = () => {
             </li>
             <li
               onClick={() => setCurrentPage('Profile')}
-              className={`flex items-center px-6 py-4 ${
-                currentPage === 'Profile'
-                  ? 'bg-teal-600 text-white'
-                  : 'hover:bg-tealColor06'
+              className={`flex items-center py-4 pl-10 ${
+                currentPage === 'Profile' ? 'bg-teal-600 text-white' : 'hover:bg-tealColor08'
               }`}
             >
               <i className="fa-regular fa-user"></i>
@@ -162,7 +167,7 @@ const DashboardLayout = () => {
             </li>
             <li
               onClick={handleLogout}
-              className="flex items-center px-6 py-4 hover:bg-tealColor06"
+              className="flex items-center px-6 py-4 ml-4 hover:bg-tealColor06"
             >
               <i className="fa-solid fa-right-from-bracket"></i>
               <div className="ml-3">Đăng xuất</div>
@@ -189,6 +194,9 @@ const DashboardLayout = () => {
               </div>
             ))
           )}
+
+          {/* Thêm component AlertComponent */}
+          {isAlertOpen && <AlertComponent bills={[]} />}
         </main>
       </div>
     </div>

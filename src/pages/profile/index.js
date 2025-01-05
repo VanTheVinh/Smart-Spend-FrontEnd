@@ -208,7 +208,7 @@ const Profile = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-tealCustom text-white py-2 px-2 rounded-lg hover:bg-tealEdit transition duration-200"
+          className="w-full bg-tealColor11 text-white py-2 px-2 rounded-lg hover:bg-tealEdit transition duration-200"
         >
           Cập nhật thông tin
         </button>

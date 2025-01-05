@@ -43,9 +43,9 @@ const BudgetUpdate = ({ userId, currentBudget, onUpdateSuccess }) => {
   };
 
   return (
-    <div className="flex">
+    <div className="flex text-3xl">
       <div
-        className={`bg-white flex flex-col justify-center p-10 rounded-xl shadow-md mt-6 mb-10 ${
+        className={`bg-white flex flex-col justify-center p-10 rounded-xl mt-6 mb-10 ${
           actualBudget < 0 ? 'border-red-500' : 'border-green-500'
         }`}
       >

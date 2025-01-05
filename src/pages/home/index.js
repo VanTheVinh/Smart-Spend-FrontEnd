@@ -73,7 +73,7 @@ const Home = () => {
           ].map((feature, index) => (
             <div
               key={index}
-              className="flex flex-col items-center bg-tealColor09 p-8 rounded-xl shadow-lg transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl"
+              className="flex flex-col items-center bg-tealColor07 p-8 rounded-xl shadow-lg transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl"
             >
               <div className="w-16 h-16 bg-tealColor00 rounded-full flex items-center justify-center mb-6">
                 <span className="text-white text-2xl font-semibold">
@@ -93,7 +93,7 @@ const Home = () => {
       </div>
 
       {/* Footer */}
-      <footer className="py-6 bg-tealColor10 text-white text-center">
+      <footer className="py-6 bg-tealColor07 text-black text-center">
         <p>© 2024 Expense Tracker. Tất cả quyền được bảo lưu.</p>
         <p>Liên hệ: support@expensetracker.com</p>
       </footer>

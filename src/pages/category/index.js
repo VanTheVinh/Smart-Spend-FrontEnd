@@ -18,7 +18,10 @@ const CategoryList = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [filterType, setFilterType] = useState('ALL');
-  const [totalPercentageLimit, setTotalPercentageLimit] = useState(0);
+  const [totalIncomePercentageLimit, setTotalIncomePercentageLimit] =
+    useState(0);
+  const [totalExpensePercentageLimit, setTotalExpensePercentageLimit] =
+    useState(0);
 
   const formatCurrency = (amount) => {
     if (typeof amount === 'string') {
@@ -32,6 +35,8 @@ const CategoryList = () => {
     try {
       const data = await getCategoryByUserId(userId);
       setCategories(data);
+      console.log('Categories:', categories);
+
       setLoading(false);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -62,10 +67,20 @@ const CategoryList = () => {
 
   useEffect(() => {
     if (categories && categories.length > 0) {
-      const total = categories.reduce((acc, category) => {
-        return acc + parseFloat(category.percentage_limit || 0);
+      const totalIncome = categories.reduce((acc, category) => {
+        return category.category_type === 'THU'
+          ? acc + (parseFloat(category.percentage_limit) || 0)
+          : acc;
       }, 0);
-      setTotalPercentageLimit(total);
+      const totalExpense = categories.reduce((acc, category) => {
+        return category.category_type === 'CHI'
+          ? acc + (parseFloat(category.percentage_limit) || 0)
+          : acc;
+      }, 0);
+      setTotalIncomePercentageLimit(totalIncome);
+      setTotalExpensePercentageLimit(totalExpense);
+      console.log('Total Income Percentage Limit:', totalIncome); // Kiểm tra giá trị tổng giới hạn phần trăm THU
+      console.log('Total Expense Percentage Limit:', totalExpense); // Kiểm tra giá trị tổng giới hạn phần trăm CHI
     }
   }, [categories]);
 
@@ -94,8 +109,9 @@ const CategoryList = () => {
   };
 
   const filteredCategories = categories
-    .filter((category) =>
-      filterType === 'ALL' ? true : category.type === filterType,
+    .filter(
+      (category) =>
+        filterType === 'ALL' ? true : category.category_type === filterType, // Đảm bảo so sánh với category.category_type
     )
     .sort((a, b) => {
       if (amountSortOrder === 'default') {
@@ -115,6 +131,11 @@ const CategoryList = () => {
     handleCloseModal();
   };
 
+  const calculateProgress = (amount, actualAmount) => {
+    if (!amount || !actualAmount) return 0;
+    return Math.min(Math.round((actualAmount / amount) * 100), 100); // Làm tròn số về số nguyên
+  };
+
   if (loading) {
     return <div>Loading categories...</div>;
   }
@@ -124,7 +145,7 @@ const CategoryList = () => {
   }
 
   return (
-    <div className="flex flex-col justify-center">
+    <div className="flex flex-col justify-center ">
       <div className="min-h-screen">
         <div className="bg-white p-6 rounded-xl shadow-lg">
           <h3 className="text-3xl font-bold text-center mt-3 text-tealColor11">
@@ -135,7 +156,8 @@ const CategoryList = () => {
             <div className="flex justify-start mb-6">
               <AddCategory
                 onCategoryAdded={fetchCategories}
-                totalPercentageLimit={totalPercentageLimit}
+                totalIncomePercentageLimit={totalIncomePercentageLimit}
+                totalExpensePercentageLimit={totalExpensePercentageLimit}
               />
             </div>
 
@@ -156,50 +178,99 @@ const CategoryList = () => {
           {filteredCategories.length === 0 ? (
             <p className="text-center text-gray-600">Không có danh mục nào.</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredCategories.map((category, index) => (
-                <div
-                  key={category.id}
-                  className="bg-white p-6 rounded-xl shadow-md flex flex-col"
-                >
-                  <div className="text-3xl font-bold text-tealColor02">
-                    {category.category_name}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 ">
+              {filteredCategories.map((category, index) => {
+                const progress = calculateProgress(
+                  category.amount,
+                  category.actual_amount,
+                );
+
+                // Đổi màu nền và thanh tiến trình theo loại danh mục
+                const categoryBackgroundColor =
+                  category.category_type === 'CHI'
+                    ? 'bg-orange-50' // Nền đỏ nhạt cho Chi tiêu
+                    : category.category_type === 'THU'
+                    ? 'bg-teal-50' // Nền xanh dương nhạt cho Thu nhập
+                    : 'bg-teal-50'; // Màu nền mặc định
+
+                const progressBarColor =
+                  category.category_type === 'CHI'
+                    ? 'bg-red-300' // Màu đỏ cho Chi tiêu
+                    : category.category_type === 'THU'
+                    ? 'bg-teal-500' // Màu xanh dương cho Thu nhập
+                    : 'bg-tealColor11'; // Màu mặc định nếu không phải THU hoặc CHI
+
+                return (
+                  <div
+                    key={category.id}
+                    className={`p-6 rounded-xl shadow flex flex-col group ${categoryBackgroundColor}`}
+                  >
+                    <div className="text-3xl font-bold text-tealColor02">
+                      {category.category_name}
+                    </div>
+                    <div className="text-sm text-gray-500 mt-2">
+                      {category.category_type}
+                    </div>
+                    {/* <div className="mt-4 flex-grow">
+                      <div className="flex justify-between">
+                        <span className="text-gray-700">Giới hạn:</span>
+                        <span className="font-semibold">
+                          {category.percentage_limit}%
+                        </span>
+                      </div>
+                    </div> */}
+                    
+
+                    <div className="mt-4 flex-grow">
+                      <div className="flex justify-between">
+                        <span className="text-gray-700">Ngân sách:</span>
+                        <span className="font-semibold">
+                          {formatCurrency(category.amount)} đ
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 flex-grow">
+                      <div className="flex justify-between">
+                        <span className="text-gray-700">Ngân sách thực tế:</span>
+                        <span className="font-semibold">
+                          {formatCurrency(category.actual_amount)} đ
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="mt-4">
+                      <div className="text-gray-700 mb-10">Đã thu/chi:</div>
+                      <div className="w-full bg-gray-300 rounded-full h-2 mt-1">
+                        <div
+                          className={`h-2 rounded-full ${progressBarColor}`}
+                          style={{ width: `${progress}%` }}
+                        ></div>
+                      </div>
+                      <div className="text-right text-xl font-bold text-gray-600 mt-1">
+                        {progress}%
+                      </div>
+                    </div>
+
+                    {/* Nút sửa và xóa */}
+                    <div className="mt-4 flex justify-end space-x-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <button
+                        onClick={() => handleOpenUpdateModal(category)}
+                        className="text-tealColor00 hover:text-teal-700"
+                      >
+                        <i className="fa-solid fa-pen"></i>
+                      </button>
+                      <button
+                        onClick={() => handleOpenDeleteModal(category)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <i className="fa-solid fa-trash-can ml-4"></i>
+                      </button>
+                    </div>
                   </div>
-                  <div className="text-sm text-gray-500 mt-2">{category.category_type}</div>
-                  <div className="mt-4">
-                    <div className="flex justify-between">
-                      <span className="text-gray-700">Giới hạn phần trăm:</span>
-                      <span className="font-semibold">{category.percentage_limit}%</span>
-                    </div>
-                    <div className="flex justify-between mt-2">
-                      <span className="text-gray-700">Số tiền:</span>
-                      <span className="font-semibold">{formatCurrency(category.amount)} đ</span>
-                    </div>
-                    <div className="flex justify-between mt-2">
-                      <span className="text-gray-700">Số tiền thực tế:</span>
-                      <span className="font-semibold">{formatCurrency(category.actual_amount)} đ</span>
-                    </div>
-                    <div className="flex justify-between mt-2">
-                      <span className="text-gray-700">Thời gian:</span>
-                      <span className="font-semibold">{category.time_frame}</span>
-                    </div>
-                  </div>
-                  <div className="mt-4 flex justify-around">
-                    <button
-                      onClick={() => handleOpenUpdateModal(category)}
-                      className="text-tealColor00 hover:text-teal-700"
-                    >
-                      <i className="fa-solid fa-pen"></i>
-                    </button>
-                    <button
-                      onClick={() => handleOpenDeleteModal(category)}
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      <i className="fa-solid fa-trash-can"></i>
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -210,7 +281,8 @@ const CategoryList = () => {
             onRequestClose={handleCloseModal}
             category={selectedCategory}
             onUpdateSuccess={handleUpdateCategorySuccess}
-            totalPercentageLimit={totalPercentageLimit}
+            totalIncomePercentageLimit={totalIncomePercentageLimit}
+            totalExpensePercentageLimit={totalExpensePercentageLimit}
           />
         )}
 

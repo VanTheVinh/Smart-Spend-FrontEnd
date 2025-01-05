@@ -103,7 +103,7 @@ const UpdateBillModal = ({
       className="modal max-w-lg w-full p-6 bg-white rounded-xl shadow-xl"
       overlayClassName="overlay fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center"
     >
-      <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+      <h2 className="text-4xl text-tealColor11 font-bold text-gray-800 mb-8 text-center">
         Cập nhật hóa đơn
       </h2>
       <form onSubmit={handleSubmit} className="space-y-6">

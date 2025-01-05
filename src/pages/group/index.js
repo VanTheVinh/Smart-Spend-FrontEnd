@@ -125,7 +125,7 @@ const Group = () => {
                       <td className="py-4 px-4">
                         <button
                           onClick={() => handleGroupDetail(group.id)}
-                          className="px-2 py-1 text-3xl text-tealCustom rounded-md"
+                          className="px-2 py-1 text-3xl text-tealColor11 rounded-md"
                         >
                           <i class="fa-solid fa-circle-info"></i>
                         </button>

@@ -95,85 +95,131 @@ const Register = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen" style={{ backgroundColor: '#f0fdfa' }}>
-      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Đăng ký</h2>
-        <form onSubmit={handleRegister} className="space-y-4">
+    <div
+      className="flex items-center justify-center h-screen"
+      style={{ backgroundColor: '#f0fdfa' }}
+    >
+      <div className="bg-white p-8 rounded-xl shadow-lg w-96">
+        <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+          Đăng ký
+        </h2>
+        <form onSubmit={handleRegister} className="space-y-4 w-full">
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Họ và tên:</label>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Họ và tên:
+            </label>
             <input
               type="text"
               value={fullname}
               onChange={(e) => handleInputChange('fullname', e.target.value)}
               placeholder="Nhập họ và tên"
-              className={`w-full px-2 py-1 border-b-2 ${errors.fullname ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-teal-500`}
+              className={`w-full px-2 py-1 border-b-2 ${
+                errors.fullname ? 'border-red-500' : 'border-gray-300'
+              } focus:outline-none focus:border-teal-500`}
             />
-            {errors.fullname && <p className="text-red-500 text-sm">{errors.fullname}</p>}
+            {errors.fullname && (
+              <p className="text-red-500 text-sm">{errors.fullname}</p>
+            )}
           </div>
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Tên người dùng:</label>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Tên người dùng:
+            </label>
             <input
               type="text"
               value={username}
               onChange={(e) => handleInputChange('username', e.target.value)}
               placeholder="Nhập tên người dùng"
-              className={`w-full px-2 py-1 border-b-2 ${errors.username ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-teal-500`}
+              className={`w-full px-2 py-1 border-b-2 ${
+                errors.username ? 'border-red-500' : 'border-gray-300'
+              } focus:outline-none focus:border-teal-500`}
             />
-            {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
+            {errors.username && (
+              <p className="text-red-500 text-sm">{errors.username}</p>
+            )}
           </div>
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Email:</label>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Email:
+            </label>
             <input
               type="email"
               value={email}
               onChange={(e) => handleInputChange('email', e.target.value)}
               placeholder="Nhập email"
-              className={`w-full px-2 py-1 border-b-2 ${errors.email ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-teal-500`}
+              className={`w-full px-2 py-1 border-b-2 ${
+                errors.email ? 'border-red-500' : 'border-gray-300'
+              } focus:outline-none focus:border-teal-500`}
             />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email}</p>
+            )}
           </div>
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Mật khẩu:</label>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Mật khẩu:
+            </label>
             <input
               type="password"
               value={password}
               onChange={(e) => handleInputChange('password', e.target.value)}
               placeholder="Nhập mật khẩu"
-              className={`w-full px-2 py-1 border-b-2 ${errors.password ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-teal-500`}
+              className={`w-full px-2 py-1 border-b-2 ${
+                errors.password ? 'border-red-500' : 'border-gray-300'
+              } focus:outline-none focus:border-teal-500`}
             />
-            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+            {errors.password && (
+              <p className="text-red-500 text-sm">{errors.password}</p>
+            )}
           </div>
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Xác nhận mật khẩu:</label>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Xác nhận mật khẩu:
+            </label>
             <input
               type="password"
               value={confirmPassword}
-              onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+              onChange={(e) =>
+                handleInputChange('confirmPassword', e.target.value)
+              }
               placeholder="Nhập lại mật khẩu"
-              className={`w-full px-2 py-1 border-b-2 ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-teal-500`}
+              className={`w-full px-2 py-1 border-b-2 ${
+                errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+              } focus:outline-none focus:border-teal-500`}
             />
-            {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword}</p>}
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
+            )}
           </div>
-          <button type="submit" className="w-full px-3 py-2 text-white font-bold rounded-md transition bg-tealColor00">
+          <button
+            type="submit"
+            className="w-full px-3 py-2 text-white font-bold rounded-md transition bg-tealColor00"
+          >
             Đăng ký
           </button>
         </form>
 
         {/* Hiển thị thông báo */}
         {message && (
-  <p
-    className={`mt-4 font-semibold text-center py-3 px-5 rounded-md shadow-lg transition-all duration-300 ease-in-out transform 
-    ${message.status === 'success' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'} 
+          <p
+            className={`mt-4 font-semibold text-center py-3 px-5 rounded-md shadow-lg transition-all duration-300 ease-in-out transform 
+    ${
+      message.status === 'success'
+        ? 'bg-green-100 text-green-600'
+        : 'bg-red-100 text-red-600'
+    } 
     opacity-0 animate-slide-up opacity-100`}
-  >
-    {message.message}
-  </p>
-)}
-
+          >
+            {message.message}
+          </p>
+        )}
 
         <p className="mt-6 text-center text-gray-700">
           Đã có tài khoản?{' '}
-          <span onClick={() => navigate('/login')} className="text-teal-500 font-bold cursor-pointer hover:underline">
+          <span
+            onClick={() => navigate('/login')}
+            className="text-teal-500 font-bold cursor-pointer hover:underline"
+          >
             Đăng nhập
           </span>
         </p>

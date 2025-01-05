@@ -145,12 +145,11 @@ const BillList = ({ userId, groupId, onActionComplete, month, year, type }) => {
   }
 
   return (
-    <div className="flex flex-col justify-center ">
+    <div className="flex flex-col justify-center">
       <div className=" min-h-screen">
         <div className="bg-white rounded-xl ">
-          
           <div className="flex justify-between mb-4">
-            <div className="flex justify-start mb-2 bg-tealColor00">
+            <div className="flex justify-start h-12 bg-tealColor00">
               <AddBillModal onBillAdded={fetchBillsData} groupId={groupId} />
             </div>
             <div className="my-4 space-x-4 text-gray-600">
@@ -196,7 +195,9 @@ const BillList = ({ userId, groupId, onActionComplete, month, year, type }) => {
                   {filteredBills.map((bill, index) => (
                     <tr
                       key={bill.id}
-                      className={index % 2 === 1 ? 'bg-tdOdd' : 'bg-white'}
+                      className={`${
+                        index % 2 === 0 ? 'bg-gray-100' : 'bg-white'
+                      }`}
                     >
                       <td>
                         {bill.type === 'THU' ? (

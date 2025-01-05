@@ -192,15 +192,21 @@ const GroupDetail = () => {
 
   return (
     <div>
-      <div className="flex flex-col justify-center mx-20">
-        <div className="p-8 min-h-screen">
-          <div className="bg-white p-6 rounded-xl shadow-md mt-8">
-            <h3 className="text-3xl text-center font-bold my-7 mb-8">
-              CHI TIẾT NHÓM
+      <div className="flex flex-col justify-center mx-14">
+        <div className="">
+          <div className="bg-white p-6 shadow-md mt-8">
+            <h3 className="text-4xl text-tealColor11 font-bold mb-12 flex items-center">
+              <button
+                onClick={() => window.history.back()} // Quay lại trang trước
+                className="text-base text-tealColor11 font-medium px-4 py-2 border border-tealColor11 rounded-md hover:bg-tealColor11 hover:text-white transition"
+              >
+                Quay lại
+              </button>
+              <span className="flex-grow text-center mr-28">CHI TIẾT NHÓM</span>
             </h3>
 
             {group && (
-              <div className=" bg-tdOdd border-b-2 border-tealCustom rounded-xl shadow-lg p-4 mb-16 h-20">
+              <div className=" bg-tealColor06 border-b-2 border-tealColor11 p-4 mb-16 h-20">
                 <div className="flex items-center justify-between mb-4 mx-14">
                   <p>
                     <strong>Tên nhóm: </strong> {group.group_name}
@@ -219,7 +225,7 @@ const GroupDetail = () => {
                   {isAdmin() && (
                     <button
                       onClick={handleEditGroupToggle}
-                      className="px-2 py-1 text-tealCustom"
+                      className="px-2 py-1 text-tealColor06"
                     >
                       <i className="fa-solid fa-pen"></i>
                     </button>
@@ -289,15 +295,15 @@ const GroupDetail = () => {
               </div>
             )}
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-lg mt-24">
-            <h2 className="text-center font-bold my-8">
+          <div className="bg-white shadow-lg">
+            {/* <h2 className="text-center font-bold mb-10">
               DANH SÁCH THÀNH VIÊN NHÓM
-            </h2>
+            </h2> */}
             {members.length > 0 ? (
-              <div className="overflow-x-auto rounded-xl shadow-lg">
+              <div className="overflow-x-auto rounded-xl shadow-sm">
                 <table className="min-w-full border-collapse text-center bg-white shadow-md">
                   <thead>
-                    <tr className=" text-black border-b-2 bg-tealFirsttd border-tealCustom">
+                    <tr className=" text-black border-b-2 border-tealColor06">
                       <th className="py-4 px-4">Thành viên</th>
                       <th className="py-4 px-4">Ngân sách</th>
                       <th className="py-4 px-4">Ngày tham gia</th>
@@ -357,7 +363,7 @@ const GroupDetail = () => {
                                   setEditingMemberId(member.user_id);
                                   setMemberAmount(member.member_amount);
                                 }}
-                                className="px-2 py-1 text-tealCustom"
+                                className="px-2 py-1 text-tealColor11"
                               >
                                 <i className="fa-solid fa-pen"></i>
                               </button>
@@ -396,17 +402,17 @@ const GroupDetail = () => {
 
             <button
               onClick={toggleSearch}
-              className={`mt-6 px-4 py-2 font-medium rounded-md ${
+              className={`mt-6 px-4 py-2 ml-10 my-4 font-medium rounded-md ${
                 showSearch
-                  ? 'bg-gray-500 text-white hover:bg-gray-600'
-                  : 'bg-tealCustom text-white hover:bg-teal-600'
+                  ? 'bg-red-600 text-white hover:bg-red-500'
+                  : 'bg-tealColor11 text-white hover:bg-teal-600'
               }`}
             >
               {showSearch ? 'Đóng' : 'Thêm thành viên'}
             </button>
 
             {showSearch && (
-              <div className="mt-6 p-5 bg-openForm rounded-lg shadow-md mb-5">
+              <div className="my-6 px-32 pb-20 w-2/3 bg-openForm rounded-lg shadow-md">
                 <h2 className="text-xl font-bold text-gray-700 mb-4">
                   Tìm kiếm người dùng
                 </h2>
@@ -440,7 +446,7 @@ const GroupDetail = () => {
                                 onClick={() =>
                                   handleAddMember(groupId, user.id)
                                 }
-                                className="px-3 py-1 bg-tealCustom text-white rounded-md hover:bg-teal-600"
+                                className="px-3 py-1 bg-tealColor11 text-white rounded-md hover:bg-teal-600"
                               >
                                 Thêm
                               </button>
@@ -456,8 +462,10 @@ const GroupDetail = () => {
           </div>
           {error && <p className="mt-4 text-red-500">{error}</p>}
         </div>
+        <div className="mt-10">
+          <GroupBill userId={userId} groupId={groupId} />
+        </div>
       </div>
-      <GroupBill userId={userId} groupId={groupId}/>
     </div>
   );
 };

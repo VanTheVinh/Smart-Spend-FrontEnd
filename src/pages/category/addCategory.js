@@ -11,7 +11,7 @@ import { getUserInfo } from '~/services/userService';
 // Cấu hình mặc định cho Modal
 Modal.setAppElement('#root');
 
-const AddCategory = ({ totalPercentageLimit }) => {
+const AddCategory = ({ totalIncomePercentageLimit, totalExpensePercentageLimit }) => {
   const { userId, setCategories } = useContext(AppContext);
 
   // Tổng ngân sách cố định
@@ -61,50 +61,54 @@ const AddCategory = ({ totalPercentageLimit }) => {
     ? parse(categoryData.time_frame, 'dd-MM-yyyy', new Date())
     : null;
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    console.log('budget:', budget);
+    const handleChange = (e) => {
+      const { name, value } = e.target;
     
-
-    const percentageLimit = 100 - totalPercentageLimit + percentageLimitCurrent;
-
-    if (name === 'percentage_limit') {
-      let newPercentageLimit = Math.min(
-        Math.max(parseFloat(value) || 0, 0),
-        percentageLimit,
-      ); // Giới hạn giá trị từ 0 đến `percentageLimit`
-      const newAmount = (newPercentageLimit / 100) * budget; // Tính toán amount dựa trên `budget`
-      setCategoryData({
-        ...categoryData,
-        percentage_limit: newPercentageLimit,
-        amount: Math.round(newAmount),
-      });
-    } else if (name === 'amount') {
-      let newAmount = parseFloat(value) || 0;
-
-      // Tính toán giới hạn của amount dựa trên totalPercentageLimit
-      const maxAmount = (percentageLimit / 100) * budget;
-
-      // Đảm bảo amount không vượt quá giới hạn maxAmount
-      if (newAmount > maxAmount) {
-        newAmount = maxAmount; // Giới hạn amount không vượt quá maxAmount
+      console.log('budget:', budget);
+    
+      // Kiểm tra category_type để chọn đúng giới hạn phần trăm
+      const percentageLimit = categoryData.category_type === 'THU'
+        ? 100 - totalIncomePercentageLimit + percentageLimitCurrent  // Giới hạn cho THU
+        : 100 - totalExpensePercentageLimit + percentageLimitCurrent; // Giới hạn cho CHI
+    
+      if (name === 'percentage_limit') {
+        let newPercentageLimit = Math.min(
+          Math.max(parseFloat(value) || 0, 0),
+          percentageLimit,
+        ); // Giới hạn giá trị từ 0 đến `percentageLimit`
+    
+        const newAmount = (newPercentageLimit / 100) * budget; // Tính toán amount dựa trên `budget`
+        setCategoryData({
+          ...categoryData,
+          percentage_limit: newPercentageLimit,
+          amount: Math.round(newAmount),
+        });
+      } else if (name === 'amount') {
+        let newAmount = parseFloat(value) || 0;
+    
+        // Tính toán giới hạn của amount dựa trên totalIncomePercentageLimit hoặc totalExpensePercentageLimit
+        const maxAmount = (percentageLimit / 100) * budget;
+    
+        // Đảm bảo amount không vượt quá giới hạn maxAmount
+        if (newAmount > maxAmount) {
+          newAmount = maxAmount; // Giới hạn amount không vượt quá maxAmount
+        }
+    
+        const newPercentageLimit = Math.min(
+          (newAmount / budget) * 100,
+          percentageLimit,
+        ); // Tính percentage_limit và giới hạn không quá 100
+    
+        setCategoryData({
+          ...categoryData,
+          amount: newAmount, // Cập nhật amount với giá trị không vượt quá giới hạn
+          percentage_limit: Math.round(newPercentageLimit),
+        });
+      } else {
+        setCategoryData({ ...categoryData, [name]: value });
       }
-
-      const newPercentageLimit = Math.min(
-        (newAmount / budget) * 100,
-        percentageLimit,
-      ); // Tính percentage_limit và giới hạn không quá 100
-
-      setCategoryData({
-        ...categoryData,
-        amount: newAmount, // Cập nhật amount với giá trị không vượt quá giới hạn
-        percentage_limit: Math.round(newPercentageLimit),
-      });
-    } else {
-      setCategoryData({ ...categoryData, [name]: value });
-    }
-  };
+    };
+    
 
   const handleCategoryTypeChange = (e) => {
     const value = e.target.value;
@@ -161,7 +165,7 @@ const AddCategory = ({ totalPercentageLimit }) => {
         className="modal max-w-lg w-full p-9 bg-white rounded-lg shadow-xl"
         overlayClassName="overlay fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center"
       >
-        <h2 className="text-2xl font-semibold mb-4 text-center">
+        <h2 className="text-4xl font-bold text-tealColor11 mb-10 text-center">
           Thêm danh mục
         </h2>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -248,7 +252,7 @@ const AddCategory = ({ totalPercentageLimit }) => {
           <div className="flex justify-between gap-4">
             <button
               type="submit"
-              className="bg-teal-500 text-white px-6 py-2 rounded-xl hover:bg-teal-700"
+              className="bg-tealColor11 text-white px-6 py-2 rounded-xl hover:bg-teal-700"
             >
               Thêm danh mục
             </button>
