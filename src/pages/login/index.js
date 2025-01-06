@@ -6,7 +6,7 @@ import { HiEye, HiEyeOff } from 'react-icons/hi';
 //import '../../style/index.css'; // Import file index.css chứa cấu hình Tailwind
 
 const Login = () => {
-  const { setUserId, userId, isAuthenticated, setIsAuthenticated } =
+  const { setUserId, userId, setIsAuthenticated } =
     useContext(AppContext);
   console.log('User ID:', userId); // Kiểm tra giá trị userId từ context
 
@@ -18,36 +18,36 @@ const Login = () => {
   // const [passwordVisible, setPasswordVisible] = useState(false); // Trạng thái hiển thị mật khẩu
   const navigate = useNavigate();
 
-  const validateForm = () => {
-    if (!username.trim()) {
-      setMessage('Vui lòng điền tên người dùng.');
-      return false;
-    }
-    if (!password.trim()) {
-      setMessage('Vui lòng điền mật khẩu.');
-      return false;
-    }
+  // const validateForm = () => {
+  //   if (!username.trim()) {
+  //     setMessage('Vui lòng điền tên người dùng.');
+  //     return false;
+  //   }
+  //   if (!password.trim()) {
+  //     setMessage('Vui lòng điền mật khẩu.');
+  //     return false;
+  //   }
 
-    // Kiểm tra định dạng tên người dùng (chỉ cho phép chữ và số, từ 3-15 ký tự)
-    const usernameRegex = /^[a-zA-Z0-9_]{3,15}$/;
-    if (!usernameRegex.test(username)) {
-      setMessage(
-        'Tên người dùng chỉ được chứa chữ cái, số và dấu gạch dưới, từ 3-15 ký tự.',
-      );
-      return false;
-    }
+  //   // Kiểm tra định dạng tên người dùng (chỉ cho phép chữ và số, từ 3-15 ký tự)
+  //   const usernameRegex = /^[a-zA-Z0-9_]{3,15}$/;
+  //   if (!usernameRegex.test(username)) {
+  //     setMessage(
+  //       'Tên người dùng chỉ được chứa chữ cái, số và dấu gạch dưới, từ 3-15 ký tự.',
+  //     );
+  //     return false;
+  //   }
 
-    // Kiểm tra mật khẩu (ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường và số)
-    const passwordRegex = /^(?=.*\d)[A-Za-z\d]{6,}$/;
-    if (!passwordRegex.test(password)) {
-      setMessage(
-        'Mật khẩu phải có ít nhất 6 ký tự,  một chữ cái viết thường và một chữ số.',
-      );
-      return false;
-    }
+  //   // Kiểm tra mật khẩu (ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường và số)
+  //   const passwordRegex = /^(?=.*\d)[A-Za-z\d]{6,}$/;
+  //   if (!passwordRegex.test(password)) {
+  //     setMessage(
+  //       'Mật khẩu phải có ít nhất 6 ký tự,  một chữ cái viết thường và một chữ số.',
+  //     );
+  //     return false;
+  //   }
 
-    return true;
-  };
+  //   return true;
+  // };
 
   useEffect(() => {
     // Kiểm tra nếu có accessToken trong localStorage

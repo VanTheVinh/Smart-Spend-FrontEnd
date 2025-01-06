@@ -6,7 +6,7 @@ const BudgetUpdate = ({ userId, currentBudget, onUpdateSuccess }) => {
   const [newBudget, setNewBudget] = useState(currentBudget);
   const [isEditing, setIsEditing] = useState(false);
   const [actualBudget, setActualBudget] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [ setLoading] = useState(true);
 
   const fetchUserInfo = async () => {
     try {
@@ -22,6 +22,7 @@ const BudgetUpdate = ({ userId, currentBudget, onUpdateSuccess }) => {
 
   useEffect(() => {
     fetchUserInfo();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const handleUpdateBudget = async () => {

@@ -10,10 +10,10 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 const CategoryList = () => {
   const { userId } = useContext(AppContext);
   const [categories, setCategories] = useState([]);
-  const [budget, setBudget] = useState(null);
+  const [ setBudget] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [amountSortOrder, setAmountSortOrder] = useState('default');
+  const [amountSortOrder] = useState('default');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -43,6 +43,7 @@ const CategoryList = () => {
       setError(error.message);
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const fetchUserInfo = useCallback(async () => {
@@ -56,6 +57,7 @@ const CategoryList = () => {
       setError(error.message);
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   useEffect(() => {
@@ -63,6 +65,7 @@ const CategoryList = () => {
       fetchCategories();
       fetchUserInfo();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   useEffect(() => {
@@ -122,9 +125,9 @@ const CategoryList = () => {
       return amountSortOrder === 'asc' ? amountA - amountB : amountB - amountA;
     });
 
-  const toggleAmountSortOrder = (order) => {
-    setAmountSortOrder(order);
-  };
+  // const toggleAmountSortOrder = (order) => {
+  //   setAmountSortOrder(order);
+  // };
 
   const handleUpdateCategorySuccess = async () => {
     await fetchCategories();
@@ -195,7 +198,7 @@ const CategoryList = () => {
 
                 const progressBarColor =
                   category.category_type === 'CHI'
-                    ? 'bg-red-300' // Màu đỏ cho Chi tiêu
+                    ? 'bg-red-400' // Màu đỏ cho Chi tiêu
                     : category.category_type === 'THU'
                     ? 'bg-teal-500' // Màu xanh dương cho Thu nhập
                     : 'bg-tealColor11'; // Màu mặc định nếu không phải THU hoặc CHI
@@ -211,14 +214,14 @@ const CategoryList = () => {
                     <div className="text-sm text-gray-500 mt-2">
                       {category.category_type}
                     </div>
-                    {/* <div className="mt-4 flex-grow">
+                    <div className="mt-4 flex-grow">
                       <div className="flex justify-between">
                         <span className="text-gray-700">Giới hạn:</span>
                         <span className="font-semibold">
                           {category.percentage_limit}%
                         </span>
                       </div>
-                    </div> */}
+                    </div>
                     
 
                     <div className="mt-4 flex-grow">

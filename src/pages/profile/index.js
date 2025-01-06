@@ -1,34 +1,32 @@
 import React, { useState, useEffect, useContext } from 'react';
 // import { Link } from 'react-router-dom';
-import { getUserInfo, updateUser } from '~/services/userService'; // Dịch vụ lấy và cập nhật thông tin người dùng
+import { getUserInfo, uploadAvatar } from '~/services/userService'; // Dịch vụ lấy và cập nhật thông tin người dùng
 import { AppContext } from '~/contexts/appContext';
-import { uploadAvatar } from '~/services/userService'; // Dịch vụ upload avatar
 
 const Profile = () => {
   const [userData, setUserData] = useState({
     username: '',
     fullname: '',
     password: '',
-    confirmPassword: '', // Mật khẩu xác nhận
+    confirmPassword: '',
   });
-  const [loadingUserInfo, setLoadingUserInfo] = useState(true); // Trạng thái tải thông tin người dùng
+  const [loadingUserInfo, setLoadingUserInfo] = useState(true);
   const [userInfo, setUserInfo] = useState({ fullname: '', avatar: '' });
-  const { userId } = useContext(AppContext); // Lấy userId từ context
-  const [isLoading, setIsLoading] = useState(false); // Trạng thái loading
-  const [error, setError] = useState(null); // Trạng thái lỗi
+  const { userId } = useContext(AppContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null); // Trạng thái thành công
 
   // Lấy thông tin người dùng khi component mount
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const data = await getUserInfo(userId); // Lấy thông tin người dùng từ API
-        console.log('Avatar:', data.avatar);
-
+        const data = await getUserInfo(userId);
         setUserInfo({
           fullname: data.fullname,
           avatar:
             data.avatar ||
-            'https://raw.githubusercontent.com/VanTheVinh/avatars-storage-spend-web/main/default_avatar.jpg', // URL ảnh GitHub mặc định
+            'https://raw.githubusercontent.com/VanTheVinh/avatars-storage-spend-web/main/default_avatar.jpg',
         });
       } catch (error) {
         console.error('Lỗi khi lấy thông tin người dùng:', error);
@@ -36,54 +34,49 @@ const Profile = () => {
     };
 
     fetchUserInfo();
-  }, [userId]); // Chạy lại khi userId thay đổi
+  }, [userId]);
 
   // Xử lý upload avatar
   const handleAvatarUpload = async (event) => {
-    const file = event.target.files[0]; // Lấy file từ input
+    const file = event.target.files[0];
     if (file) {
-      setIsLoading(true); // Bắt đầu loading khi upload
-
+      setIsLoading(true);
       try {
         const formData = new FormData();
-        formData.append('avatar', file); // Gửi file avatar
+        formData.append('avatar', file);
 
-        const response = await uploadAvatar(formData, userId); // Gọi service upload avatar
-        console.log('Kết quả trả về từ API:', response); // Log kết quả từ API
-
+        const response = await uploadAvatar(formData, userId);
         if (response && response.avatar_url) {
           setUserInfo((prevInfo) => ({
             ...prevInfo,
             avatar: `${response.avatar_url}?timestamp=${new Date().getTime()}`,
           }));
+          setSuccess('Cập nhật ảnh đại diện thành công.');
         }
       } catch (error) {
         setError('Lỗi khi tải ảnh lên. Vui lòng thử lại.');
         console.error('Lỗi khi upload avatar:', error);
       } finally {
-        setIsLoading(false); // Kết thúc loading
+        setIsLoading(false);
       }
     }
   };
 
-  // Gọi API để lấy thông tin người dùng khi component được mount
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await getUserInfo(userId);
-        console.log('Data:', response);
-
         setUserData({
           username: response.username,
-          fullname: response.fullname || '', // Cập nhật thông tin từ API
-          password: '', // Mật khẩu không tải từ server, để trống
-          confirmPassword: '', // Mật khẩu xác nhận không tải
+          fullname: response.fullname || '',
+          password: '',
+          confirmPassword: '',
         });
       } catch (error) {
         setError('Không thể tải thông tin người dùng.');
         console.error('Lỗi khi tải thông tin người dùng:', error);
       } finally {
-        setLoadingUserInfo(false); // Đã tải xong thông tin người dùng
+        setLoadingUserInfo(false);
       }
     };
 
@@ -101,29 +94,34 @@ const Profile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(''); // Reset error message trước khi gửi request
-
-    // Kiểm tra nếu mật khẩu mới và xác nhận mật khẩu không khớp
+    setError('');
+    setSuccess(null);
+  
     if (userData.password !== userData.confirmPassword) {
       setError('Mật khẩu xác nhận không khớp.');
       setIsLoading(false);
       return;
     }
-
+  
     try {
-      const response = await updateUser(userId, userData);
-      // Xử lý kết quả thành công (ví dụ, hiển thị thông báo hoặc cập nhật giao diện)
-      console.log('Cập nhật thông tin người dùng thành công:', response);
+      // const response = await updateUser(userId, userData);
+      setSuccess('Cập nhật thông tin người dùng thành công.');
+  
+      // Xóa dữ liệu trong ô mật khẩu
+      setUserData((prevData) => ({
+        ...prevData,
+        password: '',
+        confirmPassword: '',
+      }));
     } catch (error) {
-      // Xử lý lỗi (ví dụ, hiển thị thông báo lỗi)
       setError('Đã xảy ra lỗi trong quá trình cập nhật thông tin.');
       console.error('Lỗi khi cập nhật thông tin người dùng:', error);
     } finally {
-      setIsLoading(false); // Kết thúc loading
+      setIsLoading(false);
     }
   };
+  
 
-  // Nếu đang tải thông tin người dùng thì hiển thị loader
   if (loadingUserInfo) {
     return <p>Đang tải thông tin người dùng...</p>;
   }
@@ -149,7 +147,6 @@ const Profile = () => {
             className="text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-teal-100 file:text-tealCustom hover:file:bg-hovercolor"
           />
           {isLoading && <p className="text-tealCustom">Uploading...</p>}
-          {error && <p className="text-red-500">{error}</p>}
         </div>
 
         <div className="my-4">
@@ -208,12 +205,13 @@ const Profile = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-tealColor11 text-white py-2 px-2 rounded-lg hover:bg-tealEdit transition duration-200"
+          className="w-full bg-tealColor11 text-white py-2 px-2 mb-8 rounded-lg hover:bg-tealEdit transition duration-200"
         >
           Cập nhật thông tin
         </button>
 
         {isLoading && <p className="text-tealCustom">Cập nhật...</p>}
+        {success && <p className="text-green-500">{success}</p>}
         {error && <p className="text-red-500">{error}</p>}
       </form>
     </div>

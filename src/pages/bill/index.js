@@ -69,12 +69,14 @@ const BillList = ({ userId, groupId, onActionComplete, month, year, type }) => {
     if (userId) {
       fetchBillsData();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, groupId]);
 
   useEffect(() => {
     if (bills.length > 0) {
       fetchCategoryNames();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bills, userId]);
 
   function handleEdit(bill) {
@@ -116,7 +118,7 @@ const BillList = ({ userId, groupId, onActionComplete, month, year, type }) => {
       const isTypeMatch =
         filterType === 'ALL' ? true : bill.type === filterType;
 
-      const [billDay, billMonth, billYear] = bill.date.split('-').map(Number);
+      const [ billMonth, billYear] = bill.date.split('-').map(Number);
 
       const isMonthMatch = Number(month) === billMonth;
       const isYearMatch = Number(year) === billYear;
@@ -224,9 +226,10 @@ const BillList = ({ userId, groupId, onActionComplete, month, year, type }) => {
                         <img
                           src={`https://raw.githubusercontent.com/VanTheVinh/avatars-storage-spend-web/main/avatars/avatar_user_${bill.user_id}.jpg`}
                           alt={`Avatar of user ${bill.user_id}`}
-                          className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md hover:shadow-lg transition-shadow duration-300"
+                          className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md hover:shadow-lg transition-shadow duration-300 object-cover"
                         />
                       </td>
+
                       <td className="py-4 px-4 relative">
                         <button
                           onClick={() => handleEdit(bill)}

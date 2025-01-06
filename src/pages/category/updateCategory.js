@@ -1,6 +1,5 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
-import { AppContext } from '~/contexts/appContext';
 import { format, parse } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -18,7 +17,7 @@ const UpdateCategory = ({
   totalIncomePercentageLimit,
   totalExpensePercentageLimit,
 }) => {
-  const { setCategories } = useContext(AppContext);
+  // const { setCategories } = useContext(AppContext);
 
   const [categoryData, setCategoryData] = useState({
     category_type: category?.category_type || '',
@@ -49,6 +48,7 @@ const UpdateCategory = ({
 
       fetchUserBudget();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category?.user_id]);
 
   const handleChange = (e) => {
@@ -112,14 +112,18 @@ const UpdateCategory = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     try {
-      // Gửi yêu cầu PUT với category.id và categoryData qua body
       const response = await updateCategory(category.id, categoryData);
-      if (response.status === 200) {
-        alert('Cập nhật thành công!');
-        onUpdateSuccess(response.data); // Gọi hàm để xử lý dữ liệu cập nhật
-        onRequestClose(); // Đóng modal
+      console.log('Submit form with:', response);
+  
+      // Kiểm tra chính xác theo cấu trúc API trả về
+      if (response.status === 'success') {
+        alert(response.message); // Hiển thị thông báo thành công từ API
+        onUpdateSuccess(response.message);
+        onRequestClose();
       } else {
+        console.error('Update failed:', response);
         alert('Đã xảy ra lỗi khi cập nhật!');
       }
     } catch (error) {
@@ -128,7 +132,6 @@ const UpdateCategory = ({
     }
   };
   
-
   const selectedDate = categoryData.time_frame
     ? parse(categoryData.time_frame, 'dd-MM-yyyy', new Date())
     : null;

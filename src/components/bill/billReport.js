@@ -58,6 +58,7 @@ const BillReport = ({ month, year, type, userId }) => {
 
     return () => {
       if (chartInstanceRef.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         chartInstanceRef.current.destroy();
       }
     };
