@@ -6,10 +6,12 @@ const BudgetUpdate = ({ userId, currentBudget, onUpdateSuccess }) => {
   const [newBudget, setNewBudget] = useState(currentBudget);
   const [isEditing, setIsEditing] = useState(false);
   const [actualBudget, setActualBudget] = useState(null);
-  const [ setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const fetchUserInfo = async () => {
     try {
+      console.log('Loading user info', loading);
+      
       const data = await getUserInfo(userId);
       setNewBudget(data.budget);
       setActualBudget(data.actual_budget);
