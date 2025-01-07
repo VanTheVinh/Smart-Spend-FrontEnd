@@ -118,7 +118,8 @@ const BillList = ({ userId, groupId, onActionComplete, month, year, type }) => {
       const isTypeMatch =
         filterType === 'ALL' ? true : bill.type === filterType;
 
-      const [ billMonth, billYear] = bill.date.split('-').map(Number);
+      // eslint-disable-next-line no-unused-vars
+      const [billDay, billMonth, billYear] = bill.date.split('-').map(Number);
 
       const isMonthMatch = Number(month) === billMonth;
       const isYearMatch = Number(year) === billYear;
@@ -133,6 +134,11 @@ const BillList = ({ userId, groupId, onActionComplete, month, year, type }) => {
       const amountB = b.amount;
       return amountSortOrder === 'asc' ? amountA - amountB : amountB - amountA;
     });
+
+    // useEffect(() => {
+    //   console.log('Bill', bills);
+      
+    // }, [userId]);
 
   const toggleAmountSortOrder = (order) => {
     setAmountSortOrder(order);

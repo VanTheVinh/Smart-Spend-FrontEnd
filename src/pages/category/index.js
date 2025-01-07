@@ -10,7 +10,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 const CategoryList = () => {
   const { userId } = useContext(AppContext);
   const [categories, setCategories] = useState([]);
-  const [ setBudget] = useState(null);
+  const [budget, setBudget] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [amountSortOrder] = useState('default');
@@ -33,6 +33,8 @@ const CategoryList = () => {
   const fetchCategories = useCallback(async () => {
     if (!userId) return;
     try {
+      console.log('Budget', budget);
+      
       const data = await getCategoryByUserId(userId);
       setCategories(data);
       console.log('Categories:', categories);
