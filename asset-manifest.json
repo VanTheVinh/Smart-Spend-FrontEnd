@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/Smart-Spend-FrontEnd/static/css/main.8fb93e89.css",
-    "main.js": "/Smart-Spend-FrontEnd/static/js/main.36c2bc57.js",
+    "main.css": "/Smart-Spend-FrontEnd/static/css/main.45fdf091.css",
+    "main.js": "/Smart-Spend-FrontEnd/static/js/main.be2b7b84.js",
     "static/js/453.d60c614c.chunk.js": "/Smart-Spend-FrontEnd/static/js/453.d60c614c.chunk.js",
     "static/media/fa-solid-900.ttf": "/Smart-Spend-FrontEnd/static/media/fa-solid-900.2582b0e4bcf85eceead0.ttf",
     "static/media/fa-brands-400.ttf": "/Smart-Spend-FrontEnd/static/media/fa-brands-400.1815e00441357e01619e.ttf",
@@ -12,12 +12,12 @@
     "static/media/fa-v4compatibility.ttf": "/Smart-Spend-FrontEnd/static/media/fa-v4compatibility.da94ef451f4969af06e6.ttf",
     "static/media/fa-v4compatibility.woff2": "/Smart-Spend-FrontEnd/static/media/fa-v4compatibility.ea8f94e1d22e0d35ccd4.woff2",
     "index.html": "/Smart-Spend-FrontEnd/index.html",
-    "main.8fb93e89.css.map": "/Smart-Spend-FrontEnd/static/css/main.8fb93e89.css.map",
-    "main.36c2bc57.js.map": "/Smart-Spend-FrontEnd/static/js/main.36c2bc57.js.map",
+    "main.45fdf091.css.map": "/Smart-Spend-FrontEnd/static/css/main.45fdf091.css.map",
+    "main.be2b7b84.js.map": "/Smart-Spend-FrontEnd/static/js/main.be2b7b84.js.map",
     "453.d60c614c.chunk.js.map": "/Smart-Spend-FrontEnd/static/js/453.d60c614c.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.8fb93e89.css",
-    "static/js/main.36c2bc57.js"
+    "static/css/main.45fdf091.css",
+    "static/js/main.be2b7b84.js"
   ]
 }
