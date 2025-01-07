@@ -206,7 +206,7 @@ const GroupDetail = () => {
             </h3>
 
             {group && (
-              <div className=" bg-tealColor06 border-b-2 border-tealColor11 p-4 mb-16 h-20">
+              <div className="rounded-xl bg-tealColor06 border-b-2 border-tealColor11 p-4 mb-5 h-20">
                 <div className="flex items-center justify-between mb-4 mx-14">
                   <p>
                     <strong>Tên nhóm: </strong> {group.group_name}
@@ -225,7 +225,7 @@ const GroupDetail = () => {
                   {isAdmin() && (
                     <button
                       onClick={handleEditGroupToggle}
-                      className="px-2 py-1 text-tealColor06"
+                      className="px-2 py-1 text-tealColor11"
                     >
                       <i className="fa-solid fa-pen"></i>
                     </button>
@@ -236,7 +236,7 @@ const GroupDetail = () => {
 
             {editingGroup && (
               <div
-                className="p-8 bg-openForm rounded-lg shadow-md mt-4 mb-11 mx-auto"
+                className="p-8 bg-openForm bg-gray-50 rounded-lg shadow-md mt-4 mb-11 mx-auto"
                 style={{ maxWidth: '500px', width: '100%' }}
               >
                 <h3 className="text-2xl text-center font-bold text-gray-700 mb-4">
@@ -251,11 +251,11 @@ const GroupDetail = () => {
                     name="group_name"
                     value={groupDetails.group_name}
                     onChange={handleGroupDetailsChange}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-tealCustom"
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-tealColor11"
                   />
                 </label>
                 <label className="block mb-4">
-                  <span className="block text-sm font-medium text-gray-600 mb-3">
+                  <span className="block text-xl font-medium text-gray-600 mb-3">
                     Trạng thái:
                   </span>
                   <input
@@ -263,11 +263,11 @@ const GroupDetail = () => {
                     name="status"
                     value={groupDetails.status}
                     onChange={handleGroupDetailsChange}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-tealCustom"
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-tealColor11"
                   />
                 </label>
                 <label className="block mb-4">
-                  <span className="block text-sm font-medium text-gray-600 mb-3">
+                  <span className="block text-xl font-medium text-gray-600 mb-3">
                     Ngân sách:
                   </span>
                   <input
@@ -275,19 +275,19 @@ const GroupDetail = () => {
                     name="amount"
                     value={groupDetails.amount}
                     onChange={handleGroupDetailsChange}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-tealCustom"
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-tealColor11"
                   />
                 </label>
                 <div className="flex justify-end gap-4">
                   <button
                     onClick={handleUpdateGroupDetails}
-                    className="px-4 py-2 bg-tealCustom text-white font-bold rounded-md hover:bg-teal-600"
+                    className=" bg-tealColor11 text-white font-bold mt-6 px-4 py-2 rounded-md hover:bg-teal-700"
                   >
                     Lưu
                   </button>
                   <button
                     onClick={handleEditGroupToggle}
-                    className="bg-gray-500 font-bold text-white px-4 py-2 rounded"
+                    className="bg-gray-500 font-bold text-white mt-6 px-4 py-2 rounded-md hover:bg-gray-600"
                   >
                     Hủy
                   </button>
@@ -412,7 +412,7 @@ const GroupDetail = () => {
             </button>
 
             {showSearch && (
-              <div className="my-6 px-32 pb-20 w-2/3 bg-openForm rounded-lg shadow-md">
+              <div className="my-6 px-10 pb-20 w-2/3">
                 <h2 className="text-xl font-bold text-gray-700 mb-4">
                   Tìm kiếm người dùng
                 </h2>
@@ -421,7 +421,7 @@ const GroupDetail = () => {
                   value={searchQuery}
                   onChange={handleInputChange}
                   placeholder="Nhập tên người dùng..."
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-tealCustom"
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-tealColor11"
                 />
                 {searchQuery && searchResults.length > 0 && (
                   <div>
@@ -430,7 +430,7 @@ const GroupDetail = () => {
                     </h3>
                     <table className="w-full text-left border border-gray-300 bg-white rounded-xl shadow-md">
                       <thead>
-                        <tr className="text-black border-b-2 rounded-xl bg-gray-200 border-tealCustom">
+                        <tr className="text-black border-b-2 rounded-xl bg-gray-200 border-tealColor11">
                           <th className="py-4 px-4">ID</th>
                           <th className="py-4 px-4">Họ tên</th>
                           <th className="py-4 px-4"></th>

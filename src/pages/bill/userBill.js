@@ -93,19 +93,6 @@ const UserBill = () => {
                 <option value="THU">Thu nhập</option>
               </select>
             </div>
-
-            {/* <div className="my-4 space-x-4 text-gray-600">
-
-              <i className="fa-solid fa-filter-circle-dollar"></i>
-              <select
-                value={amountSortOrder}
-                onChange={(e) => toggleAmountSortOrder(e.target.value)}
-              >
-                <option value="default">Mặc định</option>
-                <option value="asc">Tăng dần</option>
-                <option value="desc">Giảm dần</option>
-              </select>
-            </div> */}
           </div>
         </div>
 

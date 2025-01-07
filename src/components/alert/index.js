@@ -6,24 +6,26 @@ const SpendAlerts = ({ userId }) => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchAlerts = async () => {
-      try {
-        const data = await checkSpendAlerts(userId);
-        if (data && data.length > 0) {
-          setAlerts(data);
-        } else {
-          setAlerts([]);
-        }
-      } catch (err) {
-        setError('Không thể lấy dữ liệu cảnh báo chi tiêu.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchAlerts = async () => {
+    try {
+      const data = await checkSpendAlerts(userId);
+      setAlerts(data || []);
+    } catch (err) {
+      setError('Không thể lấy dữ liệu cảnh báo chi tiêu.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchAlerts();
   }, [userId]);
+
+  const refreshAlerts = () => {
+    setLoading(true);
+    setError(null);
+    fetchAlerts();
+  };
 
   if (loading) {
     return <div>Đang tải dữ liệu...</div>;
@@ -47,6 +49,7 @@ const SpendAlerts = ({ userId }) => {
       ) : (
         <p>Không có cảnh báo chi tiêu nào.</p>
       )}
+      <button onClick={refreshAlerts}>Làm mới</button>
     </div>
   );
 };

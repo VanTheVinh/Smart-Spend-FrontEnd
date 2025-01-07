@@ -155,21 +155,12 @@ const BillList = ({ userId, groupId, onActionComplete, month, year, type }) => {
   return (
     <div className="flex flex-col justify-center ">
       <div className=" min-h-screen">
-        <div className="bg-white rounded-xl ">
+        <div className="bg-white rounded-xl">
           <div className="flex justify-between mb-4">
-            <div className="flex justify-start h-12 ">
+            <div className="flex justify-start h-12">
               <AddBillModal onBillAdded={fetchBillsData} groupId={groupId} />
             </div>
             <div className="my-4 space-x-4 text-gray-600">
-              {/* <i className="fa-solid fa-filter"></i>
-              <select
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-              >
-                <option value="ALL">Tất cả</option>
-                <option value="THU">Thu nhập</option>
-                <option value="CHI">Chi tiêu</option>
-              </select> */}
 
               <i className="fa-solid fa-filter-circle-dollar"></i>
               <select
@@ -195,7 +186,7 @@ const BillList = ({ userId, groupId, onActionComplete, month, year, type }) => {
                     <th className="py-4 px-4">Danh mục</th>
                     <th className="py-4 px-4">Mô tả</th>
                     <th className="py-4 px-4">Ngày</th>
-                    <th className="py-4 px-4">Tạo bởi</th>
+                    <th className="py-4 px-4">Người tạo</th>
                     <th className="py-4 px-4"></th>
                   </tr>
                 </thead>

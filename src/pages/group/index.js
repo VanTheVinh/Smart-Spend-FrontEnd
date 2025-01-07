@@ -4,8 +4,10 @@ import {
   createGroup,
   getGroup,
   getGroupMembers,
+  deleteGroup,
 } from '~/services/groupService';
 import { AppContext } from '~/contexts/appContext';
+import DeleteGroupModal from './deteleGroup';
 
 const Group = () => {
   const [groupName, setGroupName] = useState('');
@@ -14,6 +16,8 @@ const Group = () => {
   const [groups, setGroups] = useState([]);
   const [groupMember, setGroupMember] = useState([]);
   const [isAddingGroup, setIsAddingGroup] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [groupToDelete, setGroupToDelete] = useState(null);
   const { userId } = useContext(AppContext);
   const navigate = useNavigate();
 
@@ -76,17 +80,29 @@ const Group = () => {
     }
   };
 
-
   const handleGroupDetail = (groupId) => {
-    console.log('groupId:', groupId); 
-    
     navigate(`/group-detail/${groupId}`);
+  };
+  const handleDelete = (group) => {
+    setGroupToDelete(group);
+    setShowDeleteModal(true);
+  };
+
+  const handleGroupDeleted = (deletedGroupId) => {
+    setGroups(groups.filter((group) => group.id !== deletedGroupId)); // Remove deleted group from state
+    setShowDeleteModal(false); // Close delete modal after delete
+    onActionComplete();
+  };
+
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
+    setGroupToDelete(null);
   };
 
   return (
-    <div className="flex flex-col justify-center mx-2">
-      <div className="p-10 bg-tealColor07 min-h-screen">
-        <div className="bg-white p-6 rounded-xl shadow-md">
+    <div className="flex flex-col justify-center">
+      <div className="p-10 min-h-screen">
+        <div className="bg-white p-6 rounded-xl shadow-md px-11">
           <h3 className="text-3xl text-tealColor11 text-center font-bold mb-10">
             DANH SÁCH QUỸ NHÓM
           </h3>
@@ -110,24 +126,39 @@ const Group = () => {
                     <th className="py-4 px-4">Ngày Tạo</th>
                     <th className="py-4 px-4">Người Tạo</th>
                     <th className="py-4 px-4"></th>
+                    <th className="py-4 px-4"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {groups.map((group, index) => (
                     <tr
                       key={group.id}
-                      className={index % 2 === 1 ? 'bg-tdOdd' : 'bg-white'}
+                      className={index % 2 === 1 ? 'bg-gray-100' : 'bg-white'}
                     >
                       <td className="py-4 px-4">{group.group_name}</td>
                       <td className="py-4 px-4">{group.amount}</td>
                       <td className="py-4 px-4">{group.created_at}</td>
-                      <td className="py-4 px-4">{group.created_by}</td>
+                      <td className="py-4 px-4 align-middle flex justify-center">
+                        <img
+                          src={`https://raw.githubusercontent.com/VanTheVinh/avatars-storage-spend-web/main/avatars/avatar_user_${group.user_id}.jpg`}
+                          alt={`Avatar of user ${group.user_id}`}
+                          className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md hover:shadow-lg transition-shadow duration-300 object-cover"
+                        />
+                      </td>
                       <td className="py-4 px-4">
                         <button
                           onClick={() => handleGroupDetail(group.id)}
                           className="px-2 py-1 text-3xl text-tealColor11 rounded-md"
                         >
-                          <i class="fa-solid fa-circle-info"></i>
+                          <i className="fa-solid fa-circle-info"></i>
+                        </button>
+                      </td>
+                      <td className="py-4 px-4">
+                        <button
+                          onClick={() => handleDelete(group.id)}
+                          className="px-2 py-1 text-red-600"
+                        >
+                          <i className="fa-solid fa-trash"></i>
                         </button>
                       </td>
                     </tr>
@@ -142,7 +173,16 @@ const Group = () => {
           )}
 
           {message && (
-            <p className="text-center text-red-500 mt-4">{message}</p>
+            <p className="text-center text-tealColor11 mt-4">{message}</p>
+          )}
+
+{showDeleteModal && (
+            <DeleteGroupModal
+              isOpen={showDeleteModal}
+              onRequestClose={handleCloseDeleteModal}
+              groupToDelete={groupToDelete}
+              onGroupDeleted={handleGroupDeleted}
+            />
           )}
 
           {/* Modal for adding a new group */}
@@ -172,7 +212,7 @@ const Group = () => {
                 <div className="flex justify-between">
                   <button
                     onClick={handleCreateGroup}
-                    className="px-4 py-2 font-bold bg-tealCustom text-white rounded-md hover:bg-teal-600"
+                    className="px-4 py-2 font-bold bg-tealColor11 text-white rounded-md hover:bg-teal-700"
                   >
                     Thêm nhóm
                   </button>
