@@ -69,14 +69,14 @@ const BillList = ({ userId, groupId, onActionComplete, month, year, type }) => {
     if (userId) {
       fetchBillsData();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, groupId]);
 
   useEffect(() => {
     if (bills.length > 0) {
       fetchCategoryNames();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bills, userId]);
 
   function handleEdit(bill) {
@@ -135,10 +135,10 @@ const BillList = ({ userId, groupId, onActionComplete, month, year, type }) => {
       return amountSortOrder === 'asc' ? amountA - amountB : amountB - amountA;
     });
 
-    // useEffect(() => {
-    //   console.log('Bill', bills);
-      
-    // }, [userId]);
+  // useEffect(() => {
+  //   console.log('Bill', bills);
+
+  // }, [userId]);
 
   const toggleAmountSortOrder = (order) => {
     setAmountSortOrder(order);
@@ -153,11 +153,11 @@ const BillList = ({ userId, groupId, onActionComplete, month, year, type }) => {
   }
 
   return (
-    <div className="flex flex-col justify-center">
+    <div className="flex flex-col justify-center ">
       <div className=" min-h-screen">
         <div className="bg-white rounded-xl ">
           <div className="flex justify-between mb-4">
-            <div className="flex justify-start h-12 bg-tealColor00">
+            <div className="flex justify-start h-12 ">
               <AddBillModal onBillAdded={fetchBillsData} groupId={groupId} />
             </div>
             <div className="my-4 space-x-4 text-gray-600">
@@ -190,12 +190,12 @@ const BillList = ({ userId, groupId, onActionComplete, month, year, type }) => {
               <table className="min-w-full text-center bg-white">
                 <thead>
                   <tr className="text-black border-b-2 bg-tealColor06 border-tealColor00">
-                    <th className="py-4 px-4">Type</th>
-                    <th className="py-4 px-4">Amount</th>
-                    <th className="py-4 px-4">Date</th>
-                    <th className="py-4 px-4">Category</th>
-                    <th className="py-4 px-4">Description</th>
-                    <th className="py-4 px-4">Created By</th>
+                    <th className="py-4 px-4">Loại</th>
+                    <th className="py-4 px-4">Số tiền</th>
+                    <th className="py-4 px-4">Danh mục</th>
+                    <th className="py-4 px-4">Mô tả</th>
+                    <th className="py-4 px-4">Ngày</th>
+                    <th className="py-4 px-4">Tạo bởi</th>
                     <th className="py-4 px-4"></th>
                   </tr>
                 </thead>
@@ -223,12 +223,12 @@ const BillList = ({ userId, groupId, onActionComplete, month, year, type }) => {
                         )}
                       </td>
                       <td className="py-4 px-4">{bill.amount}</td>
-                      <td className="py-4 px-4">{bill.date}</td>
                       <td className="py-4 px-4">
                         {categoryNames[bill.category_id] || 'Loading...'}
                       </td>
                       <td className="py-4 px-4">{bill.description}</td>
-                      <td className="py-4 px-4">
+                        <td className="py-4 px-4">{bill.date}</td>
+                      <td className="py-4 px-4 align-middle flex justify-center">
                         <img
                           src={`https://raw.githubusercontent.com/VanTheVinh/avatars-storage-spend-web/main/avatars/avatar_user_${bill.user_id}.jpg`}
                           alt={`Avatar of user ${bill.user_id}`}

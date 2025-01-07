@@ -56,7 +56,7 @@ const UserBill = () => {
 
       {/* Ngân sách và báo cáo */}
       <div className="grid gap-4 md:grid-cols-2 mb-4">
-        <div className="bg-white shadow rounded-lg pl-56 pt-10 border-b-4 border-teal-500">
+        <div className="bg-white shadow rounded-lg pl-40 border-b-4 border-teal-500">
           <BudgetUpdate
             userId={userId}
             currentBudget={budget}
@@ -68,7 +68,7 @@ const UserBill = () => {
         </div>
       </div>
 
-      <div className="bg-white shadow rounded-lg p-6 mb-10">
+      <div className="bg-white shadow rounded-lg p-6 mb-10 px-20">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Bộ lọc tháng/năm và loại (đẩy sang phải) */}
           <div className="flex ml-auto gap-4">

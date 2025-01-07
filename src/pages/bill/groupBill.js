@@ -11,7 +11,7 @@ const GroupBill = ({ userId, groupId }) => {
 
   return (
     <div>
-      <div className="flex items-center space-x-6 mb-4">
+      <div className="flex items-center space-x-6">
         <div className="flex items-center">
           <label className="text-2xl font-medium">
             Thời gian:

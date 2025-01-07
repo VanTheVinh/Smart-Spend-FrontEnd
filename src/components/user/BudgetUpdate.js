@@ -87,7 +87,7 @@ const BudgetUpdate = ({ userId, currentBudget, onUpdateSuccess }) => {
             </>
           ) : (
             <button
-              className="text-tealCustom py-2 rounded"
+              className="text-tealColor11 py-2 rounded"
               onClick={() => setIsEditing(true)}
             >
               <i className="fa-solid fa-pen"></i>

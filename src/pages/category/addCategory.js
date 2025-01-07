@@ -156,7 +156,7 @@ const AddCategory = ({ totalIncomePercentageLimit, totalExpensePercentageLimit }
         onClick={() => setIsModalOpen(true)}
         className="bg-teal-500 text-white px-4 py-2 rounded-xl hover:bg-teal-600 "
       >
-        <i className="fa-solid fa-plus"></i> {/* Trash can icon */}
+        <i className="fa-solid fa-plus"></i>
       </button>
 
       <Modal

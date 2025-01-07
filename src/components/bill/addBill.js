@@ -127,10 +127,11 @@ const AddBillModal = ({ onBillAdded, groupId }) => {
     <div>
       <button
         onClick={() => setIsModalOpen(true)}
-        className="bg-tealCustom text-white px-4 py-2 rounded-xl hover:bg-teal-600"
+        className="bg-teal-500 text-white px-4 py-2 rounded-xl hover:bg-teal-600 "
       >
-        <i className="fa-solid fa-plus"></i> {/* Trash can icon */}
-      </button>
+        <i className="fa-solid fa-plus"></i>
+      </button>  
+      
 
       <Modal
         isOpen={isModalOpen}
